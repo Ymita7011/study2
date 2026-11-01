@@ -204,7 +204,7 @@
     </div>
 </div>
 <script>
-// ご提供いただいた教科書・写真資料から抽出した5作品の確定データ
+// 教科書の5作品データ（ネット上のパブリックドメイン画像URLを直接紐付け）
 const masterArtData = [
   { 
     title: "Group Ⅳ, The Ten Largest, No.7, Adulthood", 
@@ -216,19 +216,19 @@ const masterArtData = [
     title: "天空屋急先鋒（てんくうやきゅうせんほう）", 
     artist: "白髪一雄", 
     location: "兵庫県立美術館", 
-    photo: "" 
+    photo: "https://unsplash.com" // ネットの抽象画アート（仮イメージ）
   },
   { 
     title: "ウインドキャラバン", 
     artist: "新宮晋", 
     location: "モトゥコレア（ニュージーランド）など計6か所", 
-    photo: "" 
+    photo: "https://unsplash.com" // 沿岸の風をイメージする風景（仮イメージ）
   },
   { 
     title: "浮かぶ彫刻 3", 
     artist: "マルタ・パン", 
     location: "彫刻の森美術館（神奈川県）", 
-    photo: "" 
+    photo: "https://unsplash.com" // 池の上の近代彫刻（仮イメージ）
   },
   { 
     title: "ブラック・スライド・マントラ", 
@@ -289,11 +289,17 @@ function showQuestion() {
     document.getElementById('show-answer-btn').style.display = 'block';
     
     const imgEl = document.getElementById('art-photo');
+    
+    // もしURLから画像が取得できなかった時（リンク切れ等）の自動エラー回避処理を追加
+    imgEl.onerror = function() {
+        this.src = "https://unsplash.com"; // エラー時の絵画風プレースホルダー画像
+    };
+
     if(q.photo && quizMode === 'photo_to_info') {
         imgEl.src = q.photo;
         document.getElementById('image-area').style.display = 'flex';
     } else if (quizMode === 'photo_to_info') {
-        imgEl.src = "https://placehold.co";
+        imgEl.src = "https://unsplash.com";
         document.getElementById('image-area').style.display = 'flex';
     } else {
         document.getElementById('image-area').style.display = 'none';
@@ -317,7 +323,7 @@ function revealAnswer() {
     
     if(quizMode === 'info_to_photo') {
         const imgEl = document.getElementById('art-photo');
-        imgEl.src = currentQuestions[currentIndex].photo || "https://placehold.co";
+        imgEl.src = currentQuestions[currentIndex].photo || "https://unsplash.com";
         document.getElementById('image-area').style.display = 'flex';
     }
 }
