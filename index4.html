@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美術科定期テスト対策：美術史クイズ</title>
+    <style>
+        :root {
+            /* トリコロールカラー */
+            --tricolour-blue: #0033a0;
+            --tricolour-red: #e4002b;
+            --tricolour-white: #ffffff;
+            --bg-color: #f0f4f8;
+            --text-color: #1a202c;
+            --border-gray: #cbd5e1;
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: var(--tricolour-white);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 51, 160, 0.1);
+            padding: 35px 30px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            box-sizing: border-box;
+            border-top: 8px solid var(--tricolour-blue);
+            border-bottom: 8px solid var(--tricolour-red);
+        }
+        h1 {
+            color: var(--tricolour-blue);
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-weight: 800;
+        }
+        p.subtitle {
+            color: #64748b;
+            font-size: 15px;
+            margin-bottom: 30px;
+        }
+        .btn {
+            background-color: var(--tricolour-blue);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 6px;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #002266;
+        }
+        .btn-select {
+            background-color: #f1f5f9;
+            color: #475569;
+            border: 2px solid var(--border-gray);
+        }
+        .btn-select.active {
+            background-color: var(--tricolour-red);
+            color: white;
+            border-color: var(--tricolour-red);
+        }
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+        .art-image-container {
+            width: 100%;
+            max-height: 250px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #f1f5f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .art-image {
+            max-width: 100%;
+            max-height: 250px;
+            object-fit: contain;
+        }
+        .question-box {
+            font-size: 20px;
+            font-weight: bold;
+            background: #f8fafc;
+            padding: 20px;
+            border-left: 6px solid var(--tricolour-blue);
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        .answer-box {
+            display: none;
+            background: #fff5f5;
+            border: 2px solid var(--tricolour-red);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        .answer-box.active {
+            display: block;
+        }
+        .answer-item {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .answer-item strong {
+            color: var(--tricolour-blue);
+            display: inline-block;
+            width: 90px;
+        }
+        .self-check-area {
+            display: none;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .self-check-area.active {
+            display: flex;
+        }
+        .result-list {
+            max-height: 250px;
+            overflow-y: auto;
+            text-align: left;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            padding: 10px;
+            background: #f8fafc;
+        }
+        .result-item {
+            padding: 8px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="start-screen" class="screen active">
+        <h1>美術科 定期テスト対策</h1>
+        <p class="subtitle">画像・作者・所蔵場所 クイズ</p>
+        <p style="font-weight: 600; color: #475569; margin-bottom: 5px;">【1】出題モードを選択してください</p>
+        <div style="margin-bottom: 25px;">
+            <button class="btn btn-select active" onclick="setMode('photo_to_info', this)">作品（写真） ⇒ 作者・所蔵場所</button>
+            <button class="btn btn-select" onclick="setMode('info_to_photo', this)">作者・所蔵場所 ⇒ 作品（写真）</button>
+        </div>
+        <p style="font-weight: 600; color: #475569; margin-bottom: 5px;">【2】出題数を選択してください</p>
+        <div style="margin-bottom: 30px;">
+            <button class="btn btn-select active" onclick="setCount(5, this)">5問</button>
+            <button class="btn btn-select" onclick="setCount(10, this)">10問</button>
+            <button class="btn btn-select" onclick="setCount(15, this)">15問</button>
+            <button class="btn btn-select" onclick="setCount(20, this)">20問</button>
+        </div>
+        <button class="btn" style="font-size: 20px; padding: 15px 45px; background-color: var(--tricolour-red);" onclick="startQuiz()">クイズスタート！</button>
+    </div>
+    <div id="quiz-screen" class="screen">
+        <div style="display:flex; justify-content:space-between; font-size:14px; color:#64748b; margin-bottom:15px; font-weight:600;">
+            <span id="question-number">第 1 問</span>
+            <span id="score-progress">合っていた: 0</span>
+        </div>
+        <div id="image-area" class="art-image-container">
+            <img id="art-photo" class="art-image" src="" alt="美術品画像">
+        </div>
+        <div id="question-text" class="question-box"></div>
+        <button id="show-answer-btn" class="btn" style="width: 100%; padding: 15px;" onclick="revealAnswer()">答えを見る</button>
+        <div id="answer-box" class="answer-box">
+            <div class="answer-item"><strong>🎨 作品名:</strong> <span id="ans-title"></span></div>
+            <div class="answer-item"><strong>👤 作者:</strong> <span id="ans-artist"></span></div>
+            <div class="answer-item"><strong>📍 所蔵場所:</strong> <span id="ans-location"></span></div>
+        </div>
+        <div id="self-check-area" class="self-check-area">
+            <button class="btn" style="background-color: #2ecc71; flex: 1;" onclick="submitScore(true)">合っていた ⭕️</button>
+            <button class="btn" style="background-color: var(--tricolour-red); flex: 1;" onclick="submitScore(false)">間違っていた ❌</button>
+        </div>
+    </div>
+    <div id="result-screen" class="screen">
+        <h1>テスト終了！</h1>
+        <div id="score-summary" style="font-size: 20px; margin: 20px 0; font-weight: bold;"></div>
+        <p style="text-align: left; font-weight: bold; color: #475569; margin-bottom: 5px;">今回の結果一覧：</p>
+        <div id="result-list" class="result-list"></div>
+        <button class="btn" style="background-color: var(--tricolour-blue);" onclick="backToTop()">TOPに戻る</button>
+    </div>
+</div>
+<script>
+// ご提供いただいた教科書・写真資料から抽出した5作品の確定データ
+const masterArtData = [
+  { 
+    title: "Group Ⅳ, The Ten Largest, No.7, Adulthood", 
+    artist: "ヒルマ・アフ・クリント", 
+    location: "スウェーデン（シリーズ名「無題」より）", 
+    photo: "https://wikimedia.org" 
+  },
+  { 
+    title: "天空屋急先鋒（てんくうやきゅうせんほう）", 
+    artist: "白髪一雄", 
+    location: "兵庫県立美術館", 
+    photo: "" 
+  },
+  { 
+    title: "ウインドキャラバン", 
+    artist: "新宮晋", 
+    location: "モトゥコレア（ニュージーランド）など計6か所", 
+    photo: "" 
+  },
+  { 
+    title: "浮かぶ彫刻 3", 
+    artist: "マルタ・パン", 
+    location: "彫刻の森美術館（神奈川県）", 
+    photo: "" 
+  },
+  { 
+    title: "ブラック・スライド・マントラ", 
+    artist: "イサム・ノグチ", 
+    location: "北海道札幌市（大通公園）", 
+    photo: "https://wikimedia.org" 
+  }
+];
+
+let selectedCount = 5;
+let quizMode = 'photo_to_info';
+let currentQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let quizHistory = [];
+
+function setMode(mode, element) {
+    quizMode = mode;
+    element.parentNode.querySelectorAll('.btn-select').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+}
+
+function setCount(count, element) {
+    selectedCount = count;
+    element.parentNode.querySelectorAll('.btn-select').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+}
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function startQuiz() {
+    let shuffled = shuffle([...masterArtData]);
+    while(shuffled.length < selectedCount) {
+        shuffled = shuffled.concat(shuffle([...masterArtData]));
+    }
+    currentQuestions = shuffled.slice(0, selectedCount);
+    currentIndex = 0;
+    score = 0;
+    quizHistory = [];
+    
+    document.getElementById('start-screen').classList.remove('active');
+    document.getElementById('quiz-screen').classList.add('active');
+    showQuestion();
+}
+
+function showQuestion() {
+    let q = currentQuestions[currentIndex];
+    document.getElementById('question-number').innerText = `第 ${currentIndex + 1} 問 / 全 ${selectedCount} 問`;
+    document.getElementById('score-progress').innerText = `合っていた: ${score}`;
+    document.getElementById('answer-box').classList.remove('active');
+    document.getElementById('self-check-area').classList.remove('active');
+    document.getElementById('show-answer-btn').style.display = 'block';
+    
+    const imgEl = document.getElementById('art-photo');
+    if(q.photo && quizMode === 'photo_to_info') {
+        imgEl.src = q.photo;
+        document.getElementById('image-area').style.display = 'flex';
+    } else if (quizMode === 'photo_to_info') {
+        imgEl.src = "https://placehold.co";
+        document.getElementById('image-area').style.display = 'flex';
+    } else {
+        document.getElementById('image-area').style.display = 'none';
+    }
+    
+    if(quizMode === 'photo_to_info') {
+        document.getElementById('question-text').innerText = `この作品の「作者」と「所蔵場所」は何でしょう？`;
+    } else {
+        document.getElementById('question-text').innerHTML = `作者: <strong>${q.artist}</strong><br>所蔵: <strong>${q.location}</strong><br><span style="font-size:16px; color:#64748b;">の作品名は何でしょう？</span>`;
+    }
+    
+    document.getElementById('ans-title').innerText = q.title;
+    document.getElementById('ans-artist').innerText = q.artist;
+    document.getElementById('ans-location').innerText = q.location;
+}
+
+function revealAnswer() {
+    document.getElementById('show-answer-btn').style.display = 'none';
+    document.getElementById('answer-box').classList.add('active');
+    document.getElementById('self-check-area').classList.add('active');
+    
+    if(quizMode === 'info_to_photo') {
+        const imgEl = document.getElementById('art-photo');
+        imgEl.src = currentQuestions[currentIndex].photo || "https://placehold.co";
+        document.getElementById('image-area').style.display = 'flex';
+    }
+}
+
+function submitScore(isCorrect) {
+    let q = currentQuestions[currentIndex];
+    if(isCorrect) score++;
+    
+    quizHistory.push({
+        title: q.title,
+        artist: q.artist,
+        isCorrect: isCorrect
+    });
+    
+    currentIndex++;
+    if(currentIndex < selectedCount) {
+        showQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function showResult() {
+    document.getElementById('quiz-screen').classList.remove('active');
+    document.getElementById('result-screen').classList.add('active');
+    
+    let rate = Math.round((score / selectedCount) * 100);
+    document.getElementById('score-summary').innerHTML = `
+        出題数: ${selectedCount} 問 / 正解: ${score} 問<br>
+        <span style="color:var(--tricolour-red); font-size:24px;">正答率: ${rate}%</span>
+    `;
+    
+    let listArea = document.getElementById('result-list');
+    listArea.innerHTML = '';
+    
+    quizHistory.forEach((item, idx) => {
+        let div = document.createElement('div');
+        div.className = 'result-item';
+        div.innerHTML = `
+            <span>第${idx+1}問: <strong>${item.title}</strong> (${item.artist})</span>
+            <span style="font-weight:bold; color:${item.isCorrect ? '#2ecc71' : 'var(--tricolour-red)'}">
+                ${item.isCorrect ? '⭕️ 正解' : '❌ 不正解'}
+            </span>
+        `;
+        listArea.appendChild(div);
+    });
+}
+
+function backToTop() {
+    document.getElementById('result-screen').classList.remove('active');
+    document.getElementById('start-screen').classList.add('active');
+}
+</script>
+</body>
+</html>
