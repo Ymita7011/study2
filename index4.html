@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>美術科定期テスト対策：美術クイズ</title>
+    <title>美術科定期テスト対策：美術史・建築・彫刻総合クイズ</title>
     <style>
         :root {
             /* トリコロールカラー */
@@ -40,26 +40,26 @@
         }
         h1 {
             color: var(--tricolour-blue);
-            font-size: 24px;
+            font-size: 22px;
             margin-top: 0;
             margin-bottom: 8px;
             font-weight: 800;
         }
         p.subtitle {
             color: #64748b;
-            font-size: 15px;
-            margin-bottom: 30px;
+            font-size: 14px;
+            margin-bottom: 25px;
         }
         .btn {
             background-color: var(--tricolour-blue);
             color: white;
             border: none;
             padding: 12px 24px;
-            font-size: 16px;
+            font-size: 15px;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
-            margin: 6px;
+            margin: 5px;
             font-weight: bold;
         }
         .btn:hover {
@@ -69,6 +69,8 @@
             background-color: #f1f5f9;
             color: #475569;
             border: 2px solid var(--border-gray);
+            font-size: 14px;
+            padding: 10px 16px;
         }
         .btn-select.active {
             background-color: var(--tricolour-red);
@@ -81,31 +83,22 @@
         .screen.active {
             display: block;
         }
-        .art-image-container {
-            width: 100%;
-            max-height: 250px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            overflow: hidden;
-            background-color: #f1f5f9;
+        .mode-container {
             display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .art-image {
-            max-width: 100%;
-            max-height: 250px;
-            object-fit: contain;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 25px;
         }
         .question-box {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             background: #f8fafc;
             padding: 20px;
             border-left: 6px solid var(--tricolour-blue);
             border-radius: 0 8px 8px 0;
             margin-bottom: 25px;
-            line-height: 1.5;
+            line-height: 1.6;
+            text-align: left;
         }
         .answer-box {
             display: none;
@@ -120,8 +113,12 @@
             display: block;
         }
         .answer-item {
-            margin-bottom: 10px;
-            font-size: 16px;
+            margin-bottom: 12px;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+        .answer-item:last-child {
+            margin-bottom: 0;
         }
         .answer-item strong {
             color: var(--tricolour-blue);
@@ -138,7 +135,7 @@
             display: flex;
         }
         .result-list {
-            max-height: 250px;
+            max-height: 280px;
             overflow-y: auto;
             text-align: left;
             margin-bottom: 25px;
@@ -148,98 +145,113 @@
             background: #f8fafc;
         }
         .result-item {
-            padding: 8px;
+            padding: 10px 8px;
             border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
+            font-size: 13px;
+            line-height: 1.5;
         }
     </style>
 </head>
 <body>
 <div class="container">
+    <!-- 1. スタート画面 -->
     <div id="start-screen" class="screen active">
         <h1>美術科 定期テスト対策</h1>
-        <p class="subtitle">画像・作者・所蔵場所 クイズ</p>
-        <p style="font-weight: 600; color: #475569; margin-bottom: 5px;">【1】出題モードを選択してください</p>
-        <div style="margin-bottom: 25px;">
-            <button class="btn btn-select active" onclick="setMode('photo_to_info', this)">作品（写真） ⇒ 作者・所蔵場所</button>
-            <button class="btn btn-select" onclick="setMode('info_to_photo', this)">作者・所蔵場所 ⇒ 作品（写真）</button>
+        <p class="subtitle">建築・彫刻・美術史 総合問題集</p>
+        
+        <p style="font-weight: 600; color: #475569; margin-bottom: 8px; text-align: left;">【1】出題モード（何を問題にするか）</p>
+        <div class="mode-container">
+            <button class="btn btn-select active" onclick="setMode('title_to_all', this)">📌 作品名・建築名 から当てる</button>
+            <button class="btn btn-select" onclick="setMode('artist_to_all', this)">👤 作者・芸術家 から当てる</button>
+            <button class="btn btn-select" onclick="setMode('location_to_all', this)">📍 所蔵場所・国・地域 から当てる</button>
         </div>
-        <p style="font-weight: 600; color: #475569; margin-bottom: 5px;">【2】出題数を選択してください</p>
-        <div style="margin-bottom: 30px;">
+
+        <p style="font-weight: 600; color: #475569; margin-bottom: 8px; text-align: left;">【2】出題数</p>
+        <div style="margin-bottom: 30px; text-align: left;">
             <button class="btn btn-select active" onclick="setCount(5, this)">5問</button>
             <button class="btn btn-select" onclick="setCount(10, this)">10問</button>
             <button class="btn btn-select" onclick="setCount(15, this)">15問</button>
             <button class="btn btn-select" onclick="setCount(20, this)">20問</button>
         </div>
-        <button class="btn" style="font-size: 20px; padding: 15px 45px; background-color: var(--tricolour-red);" onclick="startQuiz()">クイズスタート！</button>
+        
+        <button class="btn" style="font-size: 18px; padding: 15px 50px; background-color: var(--tricolour-red); width: 100%;" onclick="startQuiz()">クイズスタート！</button>
     </div>
+
+    <!-- 2. クイズ解答画面 -->
     <div id="quiz-screen" class="screen">
-        <div style="display:flex; justify-content:space-between; font-size:14px; color:#64748b; margin-bottom:15px; font-weight:600;">
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#64748b; margin-bottom:15px; font-weight:600;">
             <span id="question-number">第 1 問</span>
             <span id="score-progress">合っていた: 0</span>
         </div>
-        <div id="image-area" class="art-image-container">
-            <img id="art-photo" class="art-image" src="" alt="美術品画像">
-        </div>
+        
         <div id="question-text" class="question-box"></div>
-        <button id="show-answer-btn" class="btn" style="width: 100%; padding: 15px;" onclick="revealAnswer()">答えを見る</button>
+        
+        <button id="show-answer-btn" class="btn" style="width: 100%; padding: 15px;" onclick="revealAnswer()">頭の中で答えてから「答えを見る」</button>
+        
         <div id="answer-box" class="answer-box">
-            <div class="answer-item"><strong>🎨 作品名:</strong> <span id="ans-title"></span></div>
+            <div class="answer-item"><strong>📌 作品名:</strong> <span id="ans-title"></span></div>
             <div class="answer-item"><strong>👤 作者:</strong> <span id="ans-artist"></span></div>
             <div class="answer-item"><strong>📍 所蔵場所:</strong> <span id="ans-location"></span></div>
+            <div id="notes-item" class="answer-item"><strong>💡 備考特長:</strong> <span id="ans-notes"></span></div>
         </div>
+        
         <div id="self-check-area" class="self-check-area">
             <button class="btn" style="background-color: #2ecc71; flex: 1;" onclick="submitScore(true)">合っていた ⭕️</button>
             <button class="btn" style="background-color: var(--tricolour-red); flex: 1;" onclick="submitScore(false)">間違っていた ❌</button>
         </div>
     </div>
+
+    <!-- 3. 結果画面 -->
     <div id="result-screen" class="screen">
         <h1>テスト終了！</h1>
-        <div id="score-summary" style="font-size: 20px; margin: 20px 0; font-weight: bold;"></div>
-        <p style="text-align: left; font-weight: bold; color: #475569; margin-bottom: 5px;">今回の結果一覧：</p>
+        <div id="score-summary" style="font-size: 18px; margin: 20px 0; font-weight: bold; line-height: 1.6;"></div>
+        
+        <p style="text-align: left; font-weight: bold; color: #475569; margin-bottom: 5px;">今回の結果と正解データ：</p>
         <div id="result-list" class="result-list"></div>
-        <button class="btn" style="background-color: var(--tricolour-blue);" onclick="backToTop()">TOPに戻る</button>
+        
+        <button class="btn" style="background-color: var(--tricolour-blue); width: 100%; padding: 12px;" onclick="backToTop()">TOPに戻る</button>
     </div>
 </div>
 <script>
-// 教科書の5作品データ（ネット上のパブリックドメイン画像URLを直接紐付け）
+// CSV（エクセル）から正確に抽出した全33件のテスト問題用マスターデータ
 const masterArtData = [
-  { 
-    title: "Group Ⅳ, The Ten Largest, No.7, Adulthood", 
-    artist: "ヒルマ・アフ・クリント", 
-    location: "スウェーデン（シリーズ名「無題」より）", 
-    photo: "https://wikimedia.org" 
-  },
-  { 
-    title: "天空屋急先鋒（てんくうやきゅうせんほう）", 
-    artist: "白髪一雄", 
-    location: "兵庫県立美術館", 
-    photo: "https://unsplash.com" // ネットの抽象画アート（仮イメージ）
-  },
-  { 
-    title: "ウインドキャラバン", 
-    artist: "新宮晋", 
-    location: "モトゥコレア（ニュージーランド）など計6か所", 
-    photo: "https://unsplash.com" // 沿岸の風をイメージする風景（仮イメージ）
-  },
-  { 
-    title: "浮かぶ彫刻 3", 
-    artist: "マルタ・パン", 
-    location: "彫刻の森美術館（神奈川県）", 
-    photo: "https://unsplash.com" // 池の上の近代彫刻（仮イメージ）
-  },
-  { 
-    title: "ブラック・スライド・マントラ", 
-    artist: "イサム・ノグチ", 
-    location: "北海道札幌市（大通公園）", 
-    photo: "images/001.png"
-  }
+  { title: "薬師寺東塔", artist: "-", location: "奈良県", notes: "-" },
+  { title: "浄土寺浄土堂", artist: "-", location: "兵庫", notes: "-" },
+  { title: "天壇祈年殿", artist: "-", location: "中国", notes: "-" },
+  { title: "東大寺南大門", artist: "-", location: "奈良県", notes: "-" },
+  { title: "金剛力士像", artist: "運慶", location: "東大寺南大門（奈良）", notes: "-" },
+  { title: "ピサ大聖堂", artist: "-", location: "イタリア", notes: "-" },
+  { title: "ランス大聖堂", artist: "-", location: "フランス", notes: "-" },
+  { title: "ベルサイユ宮殿オランジュリー", artist: "-", location: "フランス", notes: "-" },
+  { title: "受胎告知", artist: "-", location: "フランス", notes: "-" },
+  { title: "アフメディエ（アハメディエ）", artist: "-", location: "トルコ", notes: "-" },
+  { title: "アンコールワット", artist: "-", location: "カンボジア", notes: "-" },
+  { title: "真夢", artist: "安田侃", location: "イタリアミラノ", notes: "-" },
+  { title: "青銅時代", artist: "ロダン", location: "国立西洋美術館", notes: "-" },
+  { title: "女", artist: "荻原守衛", location: "東京国立近代美術館", notes: "-" },
+  { title: "三つ編みのディナ", artist: "アリスティド・マイヨール", location: "姫路美術館", notes: "-" },
+  { title: "雪の上の影", artist: "船越桂", location: "札幌芸術の森美術館", notes: "-" },
+  { title: "二つに分けられた横たわる像・カット", artist: "ヘンリー・ムーア", location: "彫刻の森美術館", notes: "-" },
+  { title: "空間の中の鳥", artist: "コンスタンティン・ブランクーシ", location: "ニューヨーク近代美術館", notes: "-" },
+  { title: "空間の中の一つの連続する形", artist: "ウンベルトボッチョーニ", location: "彫刻の森美術館", notes: "-" },
+  { title: "タイルの壁にもたれない東洋の女", artist: "ジョージ・シーガル", location: "徳島県立近代美術館", notes: "-" },
+  { title: "指さす人", artist: "アルベルト・ジャコメッティ", location: "テート（イギリス）", notes: "-" },
+  { title: "赤い噴水", artist: "アレクサンダー・コールダー", location: "兵庫県立美術館", notes: "-" },
+  { title: "ニテロイ現代美術館", artist: "オスカー・ニーマイヤー", location: "ニテロイ市", notes: "宇宙船っぽいけど周囲の自然になじんでる。建築家は花をイメージ。" },
+  { title: "セントメリーアックス３０", artist: "ノーマン・フォスター", location: "ロンドン", notes: "ガーキンという愛称。普通のビルに比べ環境配慮ができており節電されている" },
+  { title: "白川郷の合掌造り集落", artist: "-", location: "岐阜県", notes: "-" },
+  { title: "自然環境に適応した高床の家", artist: "-", location: "インドネシア", notes: "-" },
+  { title: "紙の大聖堂", artist: "坂茂", location: "クライストチャーチ", notes: "-" },
+  { title: "三徳山三佛寺 奥院", artist: "-", location: "鳥取", notes: "もともと修行の場。信仰の対象として引き立てられている。" },
+  { title: "棚田", artist: "-", location: "福岡県うきは市", notes: "-" },
+  { title: "フンデルトヴァッサーハウス", artist: "フリーデンスライヒ・フンデルトヴァッサー", location: "ウィーン", notes: "-" },
+  { title: "ウインドキャラバン", artist: "新宮晋", location: "モトゥコレア（ニュージーランド）", notes: "-" },
+  { title: "浮かぶ彫刻 3", artist: "マルタ・パン", location: "彫刻の森美術館（神奈川県）", notes: "-" },
+  { title: "ブラック・スライド・マントラ", artist: "イサム・ノグチ", location: "北海道札幌市（大通公園）", notes: "-" }
 ];
 
 let selectedCount = 5;
-let quizMode = 'photo_to_info';
+let quizMode = 'title_to_all';
 let currentQuestions = [];
 let currentIndex = 0;
 let score = 0;
@@ -267,9 +279,6 @@ function shuffle(array) {
 
 function startQuiz() {
     let shuffled = shuffle([...masterArtData]);
-    while(shuffled.length < selectedCount) {
-        shuffled = shuffled.concat(shuffle([...masterArtData]));
-    }
     currentQuestions = shuffled.slice(0, selectedCount);
     currentIndex = 0;
     score = 0;
@@ -288,44 +297,41 @@ function showQuestion() {
     document.getElementById('self-check-area').classList.remove('active');
     document.getElementById('show-answer-btn').style.display = 'block';
     
-    const imgEl = document.getElementById('art-photo');
-    
-    // もしURLから画像が取得できなかった時（リンク切れ等）の自動エラー回避処理を追加
-    imgEl.onerror = function() {
-        this.src = "https://unsplash.com"; // エラー時の絵画風プレースホルダー画像
-    };
-
-    if(q.photo && quizMode === 'photo_to_info') {
-        imgEl.src = q.photo;
-        document.getElementById('image-area').style.display = 'flex';
-    } else if (quizMode === 'photo_to_info') {
-        imgEl.src = "https://unsplash.com";
-        document.getElementById('image-area').style.display = 'flex';
+    let qText = "";
+    if (quizMode === 'title_to_all') {
+        qText = `【作品・建築名】<br><strong style="font-size:22px; color:var(--tricolour-blue);">${q.title}</strong><br><br>の「作者」「所蔵場所」は何でしょう？`;
+    } else if (quizMode === 'artist_to_all') {
+        // 作者が「-」の場合はスキップするか適切な表示にする
+        let displayArtist = q.artist === '-' ? '（作者未特定/記載なし）' : q.artist;
+        qText = `【作者・芸術家】<br><strong style="font-size:22px; color:var(--tricolour-blue);">${displayArtist}</strong><br><br>が作った「作品名」や「所蔵場所」は何でしょう？`;
     } else {
-        document.getElementById('image-area').style.display = 'none';
+        qText = `【所蔵場所・地域】<br><strong style="font-size:22px; color:var(--tricolour-blue);">${q.location}</strong><br><br>にある「作品名・建築名」や「作者」は何でしょう？`;
     }
     
-    if(quizMode === 'photo_to_info') {
-        document.getElementById('question-text').innerText = `この作品の「作者」と「所蔵場所」は何でしょう？`;
-    } else {
-        document.getElementById('question-text').innerHTML = `作者: <strong>${q.artist}</strong><br>所蔵: <strong>${q.location}</strong><br><span style="font-size:16px; color:#64748b;">の作品名は何でしょう？</span>`;
+    // 備考・特長がある場合はヒントとして問題文に添える
+    if (q.notes !== "-") {
+        qText += `<br><br><span style="font-size:14px; color:#64748b; font-weight:normal;">💡 ヒント（特徴）：${q.notes}</span>`;
     }
     
+    document.getElementById('question-text').innerHTML = qText;
+    
+    // 答えのセット
     document.getElementById('ans-title').innerText = q.title;
     document.getElementById('ans-artist').innerText = q.artist;
     document.getElementById('ans-location').innerText = q.location;
+    document.getElementById('ans-notes').innerText = q.notes;
+    
+    if(q.notes === "-") {
+        document.getElementById('notes-item').style.display = 'none';
+    } else {
+        document.getElementById('notes-item').style.display = 'block';
+    }
 }
 
 function revealAnswer() {
     document.getElementById('show-answer-btn').style.display = 'none';
     document.getElementById('answer-box').classList.add('active');
     document.getElementById('self-check-area').classList.add('active');
-    
-    if(quizMode === 'info_to_photo') {
-        const imgEl = document.getElementById('art-photo');
-        imgEl.src = currentQuestions[currentIndex].photo || "https://unsplash.com";
-        document.getElementById('image-area').style.display = 'flex';
-    }
 }
 
 function submitScore(isCorrect) {
@@ -335,6 +341,7 @@ function submitScore(isCorrect) {
     quizHistory.push({
         title: q.title,
         artist: q.artist,
+        location: q.location,
         isCorrect: isCorrect
     });
     
@@ -352,7 +359,7 @@ function showResult() {
     
     let rate = Math.round((score / selectedCount) * 100);
     document.getElementById('score-summary').innerHTML = `
-        出題数: ${selectedCount} 問 / 正解: ${score} 問<br>
+        出題数: ${selectedCount} 問 / 正解数: ${score} 問<br>
         <span style="color:var(--tricolour-red); font-size:24px;">正答率: ${rate}%</span>
     `;
     
@@ -363,10 +370,15 @@ function showResult() {
         let div = document.createElement('div');
         div.className = 'result-item';
         div.innerHTML = `
-            <span>第${idx+1}問: <strong>${item.title}</strong> (${item.artist})</span>
-            <span style="font-weight:bold; color:${item.isCorrect ? '#2ecc71' : 'var(--tricolour-red)'}">
-                ${item.isCorrect ? '⭕️ 正解' : '❌ 不正解'}
-            </span>
+            <div style="display:flex; justify-content:space-between; font-weight:bold;">
+                <span>第${idx+1}問: ${item.title}</span>
+                <span style="color:${item.isCorrect ? '#2ecc71' : 'var(--tricolour-red)'}">
+                    ${item.isCorrect ? '⭕️ 正解' : '❌ 不正解'}
+                </span>
+            </div>
+            <div style="color:#64748b; margin-top:4px; font-size:12px;">
+                作者: ${item.artist} / 場所: ${item.location}
+            </div>
         `;
         listArea.appendChild(div);
     });
