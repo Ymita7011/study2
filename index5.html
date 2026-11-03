@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中3古文 定期テスト対策アプリ</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .quiz-box {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        .question-num {
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        .passage {
+            background-color: #fcf8e3;
+            border-left: 5px solid #f0ad4e;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-serif: serif;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+        .question-text {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .options-list {
+            list-style: none;
+            padding: 0;
+        }
+        .option-btn {
+            width: 100%;
+            background: #fff;
+            border: 2px solid #bdc3c7;
+            padding: 12px 20px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-btn:hover {
+            background: #e1f5fe;
+            border-color: #29b6f6;
+        }
+        .result-screen {
+            text-align: center;
+        }
+        .score {
+            font-size: 32px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 20px 0;
+        }
+        .restart-btn {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .restart-btn:hover {
+            background: #27ae60;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📝 中3古文 定期テスト対策</h1>
+
+    <!-- クイズ画面 -->
+    <div id="quiz-screen" class="quiz-box active">
+        <div id="question-number" class="question-num"></div>
+        <div id="passage-container" class="passage"></div>
+        <div id="question-text" class="question-text"></div>
+        <ul id="options-container" class="options-list"></ul>
+    </div>
+
+    <!-- 結果画面 -->
+    <div id="result-screen" class="quiz-box text-center result-screen">
+        <h2>結果発表</h2>
+        <div class="score"><span id="correct-count">0</span> / <span id="total-count">0</span> 問正解</div>
+        <p id="evaluation-message"></p>
+        <button class="restart-btn" onclick="restartQuiz()">もう一度解く</button>
+    </div>
+</div>
+
+<script>
+    // 中3の定期テストや高校入試によく出る問題データ
+    const quizData = [
+        {
+            passage: "『おくのほそ道』より\n月日は百代の過客にして、行きかふ年もまた旅人なり。",
+            question: "「百代の過客」の読み方として正しいものを呼びなさい。",
+            options: ["ひゃくだいのかかく", "はくたいのかかく", "ひゃくよのかきゃく", "はくたいのたびびと"],
+            answer: 1 // インデックス番号（0から数えるので 1 = はくたいのかかく）
+        },
+        {
+            passage: "『おくのほそ道』より\n月日は百代の過客にして、行きかふ年もまた旅人なり。",
+            question: "「過客」とはどういう意味ですか。",
+            options: ["過ぎ去った人", "過ちを犯す人", "旅人", "年老いた人"],
+            answer: 2
+        },
+        {
+            passage: "『徒然草』より\nつれづれなるままに、日暮らし硯に向かひて、心に移りゆくよしなしごとを、そこはかとなく書きつくれば、怪しうこそものぐるほしけれ。",
+            question: "「よしなしごと」の意味として最も適切なものを選びなさい。",
+            options: ["良いこと", "理由のあること", "つまらないこと・とりとめもないこと", "してはいけないこと"],
+            answer: 2
+        },
+        {
+            passage: "古文の重要文法",
+            question: "歴史的仮名遣い「てふてふ」を、現代仮名遣い（読み方）に直したものを一つ選びなさい。",
+            options: ["てふてふ", "ちょうちょう", "てうてう", "ちよちよ"],
+            answer: 1
+        },
+        {
+            passage: "古文の重要単語",
+            question: "古文で「いとあわれ」と言ったとき、現代語訳として最も近いニュアンスを選びなさい。",
+            options: ["とてもかわいそうだ", "たいそうしみじみと趣がある", "全くおもしろくない", "とても恐ろしい"],
+            answer: 1
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    function loadQuestion() {
+        const currentQuiz = quizData[currentQuestionIndex];
+        
+        // 画面の更新
+        document.getElementById('question-number').innerText = `第 ${currentQuestionIndex + 1} 問`;
+        document.getElementById('passage-container').innerText = currentQuiz.passage;
+        document.getElementById('question-text').innerText = currentQuiz.question;
+        
+        // 選択肢の生成
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+        
+        currentQuiz.options.forEach((option, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<button class="option-btn" onclick="checkAnswer(${index})">${option}</button>`;
+            optionsContainer.appendChild(li);
+        });
+    }
+
+    function checkAnswer(selectedIndex) {
+        const currentQuiz = quizData[currentQuestionIndex];
+        
+        // 正誤判定
+        if (selectedIndex === currentQuiz.answer) {
+            alert("⭕ 正解！");
+            score++;
+        } else {
+            alert(`❌ 残念！ 正解は「${currentQuiz.options[currentQuiz.answer]}」です。`);
+        }
+
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('quiz-screen').classList.remove('active');
+        document.getElementById('result-screen').classList.add('active');
+        
+        document.getElementById('correct-count').innerText = score;
+        document.getElementById('total-count').innerText = quizData.length;
+
+        let message = "";
+        const rate = score / quizData.length;
+        if (rate === 1) {
+            message = "素晴らしい！定期テストはバッチリです！💯";
+        } else if (rate >= 0.6) {
+            message = "合格点です！間違えたところを教科書で見直しましょう👍";
+        } else {
+            message = "もう一度教科書やノートを確認して、再挑戦してみよう！📖";
+        }
+        document.getElementById('evaluation-message').innerText = message;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        document.getElementById('result-screen').classList.remove('active');
+        document.getElementById('quiz-screen').classList.add('active');
+        loadQuestion();
+    }
+
+    // 初回起動
+    loadQuestion();
+</script>
+
+</body>
+</html>
