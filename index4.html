@@ -48,7 +48,7 @@
         p.subtitle {
             color: #64748b;
             font-size: 14px;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
         .btn {
             background-color: var(--tricolour-blue);
@@ -82,12 +82,6 @@
         }
         .screen.active {
             display: block;
-        }
-        .mode-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 25px;
         }
         .question-box {
             font-size: 18px;
@@ -159,15 +153,8 @@
         <h1>美術科 定期テスト対策</h1>
         <p class="subtitle">建築・彫刻・美術史 総合問題集</p>
         
-        <p style="font-weight: 600; color: #475569; margin-bottom: 8px; text-align: left;">【1】出題モード（何を問題にするか）</p>
-        <div class="mode-container">
-            <button class="btn btn-select active" onclick="setMode('title_to_all', this)">📌 作品名・建築名 から当てる</button>
-            <button class="btn btn-select" onclick="setMode('artist_to_all', this)">👤 作者・芸術家 から当てる</button>
-            <button class="btn btn-select" onclick="setMode('location_to_all', this)">📍 所蔵場所・国・地域 から当てる</button>
-        </div>
-
-        <p style="font-weight: 600; color: #475569; margin-bottom: 8px; text-align: left;">【2】出題数</p>
-        <div style="margin-bottom: 30px; text-align: left;">
+        <p style="font-weight: 600; color: #475569; margin-bottom: 10px; text-align: left;">出題数を選択してください</p>
+        <div style="margin-bottom: 35px; text-align: left;">
             <button class="btn btn-select active" onclick="setCount(5, this)">5問</button>
             <button class="btn btn-select" onclick="setCount(10, this)">10問</button>
             <button class="btn btn-select" onclick="setCount(15, this)">15問</button>
@@ -213,7 +200,7 @@
     </div>
 </div>
 <script>
-// CSV（エクセル）から正確に抽出した全33件のテスト問題用マスターデータ
+// CSVデータ（全33件）
 const masterArtData = [
   { title: "薬師寺東塔", artist: "-", location: "奈良県", notes: "-" },
   { title: "浄土寺浄土堂", artist: "-", location: "兵庫", notes: "-" },
@@ -234,7 +221,7 @@ const masterArtData = [
   { title: "二つに分けられた横たわる像・カット", artist: "ヘンリー・ムーア", location: "彫刻の森美術館", notes: "-" },
   { title: "空間の中の鳥", artist: "コンスタンティン・ブランクーシ", location: "ニューヨーク近代美術館", notes: "-" },
   { title: "空間の中の一つの連続する形", artist: "ウンベルトボッチョーニ", location: "彫刻の森美術館", notes: "-" },
-  { title: "タイルの壁にもたれない東洋の女", artist: "ジョージ・シーガル", location: "徳島県立近代美術館", notes: "-" },
+  { title: "タイルの壁にもたれる東洋の女", artist: "ジョージ・シーガル", location: "徳島県立近代美術館", notes: "-" },
   { title: "指さす人", artist: "アルベルト・ジャコメッティ", location: "テート（イギリス）", notes: "-" },
   { title: "赤い噴水", artist: "アレクサンダー・コールダー", location: "兵庫県立美術館", notes: "-" },
   { title: "ニテロイ現代美術館", artist: "オスカー・ニーマイヤー", location: "ニテロイ市", notes: "宇宙船っぽいけど周囲の自然になじんでる。建築家は花をイメージ。" },
@@ -251,17 +238,10 @@ const masterArtData = [
 ];
 
 let selectedCount = 5;
-let quizMode = 'title_to_all';
 let currentQuestions = [];
 let currentIndex = 0;
 let score = 0;
 let quizHistory = [];
-
-function setMode(mode, element) {
-    quizMode = mode;
-    element.parentNode.querySelectorAll('.btn-select').forEach(btn => btn.classList.remove('active'));
-    element.classList.add('active');
-}
 
 function setCount(count, element) {
     selectedCount = count;
@@ -297,25 +277,14 @@ function showQuestion() {
     document.getElementById('self-check-area').classList.remove('active');
     document.getElementById('show-answer-btn').style.display = 'block';
     
-    let qText = "";
-    if (quizMode === 'title_to_all') {
-        qText = `【作品・建築名】<br><strong style="font-size:22px; color:var(--tricolour-blue);">${q.title}</strong><br><br>の「作者」「所蔵場所」は何でしょう？`;
-    } else if (quizMode === 'artist_to_all') {
-        // 作者が「-」の場合はスキップするか適切な表示にする
-        let displayArtist = q.artist === '-' ? '（作者未特定/記載なし）' : q.artist;
-        qText = `【作者・芸術家】<br><strong style="font-size:22px; color:var(--tricolour-blue);">${displayArtist}</strong><br><br>が作った「作品名」や「所蔵場所」は何でしょう？`;
-    } else {
-        qText = `【所蔵場所・地域】<br><strong style="font-size:22px; color:var(--tricolour-blue);">${q.location}</strong><br><br>にある「作品名・建築名」や「作者」は何でしょう？`;
-    }
+    let qText = `【作品・建築名】<br><strong style="font-size:22px; color:var(--tricolour-blue);">${q.title}</strong><br><br>の「作者」「所蔵場所」は何でしょう？`;
     
-    // 備考・特長がある場合はヒントとして問題文に添える
     if (q.notes !== "-") {
         qText += `<br><br><span style="font-size:14px; color:#64748b; font-weight:normal;">💡 ヒント（特徴）：${q.notes}</span>`;
     }
     
     document.getElementById('question-text').innerHTML = qText;
     
-    // 答えのセット
     document.getElementById('ans-title').innerText = q.title;
     document.getElementById('ans-artist').innerText = q.artist;
     document.getElementById('ans-location').innerText = q.location;
