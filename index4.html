@@ -153,7 +153,13 @@
         <h1>美術科 定期テスト対策</h1>
         <p class="subtitle">建築・彫刻・美術史 総合問題集</p>
         
-        <p style="font-weight: 600; color: #475569; margin-bottom: 10px; text-align: left;">出題数を選択してください</p>
+        <p style="font-weight: 600; color: #475569; margin-bottom: 10px; text-align: left;">【1】 出題モードを選択してください</p>
+        <div style="margin-bottom: 25px; text-align: left;">
+            <button class="btn btn-select active" onclick="setQuizMode('title', this)">📌 作品名から当てる</button>
+            <button class="btn btn-select" onclick="setQuizMode('artist', this)">👤 作者名から当てる</button>
+        </div>
+
+        <p style="font-weight: 600; color: #475569; margin-bottom: 10px; text-align: left;">【2】 出題数を選択してください</p>
         <div style="margin-bottom: 35px; text-align: left;">
             <button class="btn btn-select active" onclick="setCount(5, this)">5問</button>
             <button class="btn btn-select" onclick="setCount(10, this)">10問</button>
@@ -238,10 +244,17 @@ const masterArtData = [
 ];
 
 let selectedCount = 5;
+let currentMode = 'title'; // 'title' か 'artist'
 let currentQuestions = [];
 let currentIndex = 0;
 let score = 0;
 let quizHistory = [];
+
+function setQuizMode(mode, element) {
+    currentMode = mode;
+    element.parentNode.querySelectorAll('.btn-select').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+}
 
 function setCount(count, element) {
     selectedCount = count;
@@ -258,7 +271,14 @@ function shuffle(array) {
 }
 
 function startQuiz() {
-    let shuffled = shuffle([...masterArtData]);
+    let baseData = [...masterArtData];
+    
+    // 作者モードの時は、作者の登録がないデータ（-）を除外してクイズをシャッフル
+    if (currentMode === 'artist') {
+        baseData = baseData.filter(item => item.artist !== '-');
+    }
+    
+    let shuffled = shuffle(baseData);
     currentQuestions = shuffled.slice(0, selectedCount);
     currentIndex = 0;
     score = 0;
@@ -277,7 +297,12 @@ function showQuestion() {
     document.getElementById('self-check-area').classList.remove('active');
     document.getElementById('show-answer-btn').style.display = 'block';
     
-    let qText = `【作品・建築名】<br><strong style="font-size:22px; color:var(--tricolour-blue);">${q.title}</strong><br><br>の「作者」「所蔵場所」は何でしょう？`;
+    let qText = "";
+    if (currentMode === 'title') {
+        qText = `【作品・建築名】<br><strong style="font-size:22px; color:var(--tricolour-blue);">${q.title}</strong><br><br>の「作者」「所蔵場所」は何でしょう？`;
+    } else {
+        qText = `【作者・芸術家】<br><strong style="font-size:22px; color:var(--tricolour-blue);">${q.artist}</strong><br><br>が制作した「作品名」や「所蔵場所」は何でしょう？`;
+    }
     
     if (q.notes !== "-") {
         qText += `<br><br><span style="font-size:14px; color:#64748b; font-weight:normal;">💡 ヒント（特徴）：${q.notes}</span>`;
