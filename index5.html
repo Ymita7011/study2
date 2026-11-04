@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中3古文・国語対策：三大和歌集クイズ</title>
+    <title>三大和歌集 定期テスト対策クイズ</title>
     <style>
-        /* トリコロールカラー（紺・白・赤）のベースデザイン */
         body {
             font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
             background-color: #f0f4f8;
@@ -15,102 +14,52 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 90vh;
+            min-height: 95vh;
         }
         .container {
             max-width: 600px;
             width: 100%;
-            background: #ffffff; /* 白 */
+            background: #ffffff;
             padding: 30px;
             border-radius: 12px;
-            border-top: 8px solid #0f2c59; /* 紺 */
+            border-top: 8px solid #0f2c59; /* トリコロール紺 */
             box-shadow: 0 6px 12px rgba(0,0,0,0.1);
         }
         h1 {
             text-align: center;
-            color: #0f2c59; /* 紺 */
+            color: #0f2c59;
             font-size: 22px;
             margin-top: 0;
             margin-bottom: 25px;
             padding-bottom: 12px;
             border-bottom: 2px dashed #0f2c59;
         }
-        .quiz-box {
-            display: none;
+        .screen { display: none; }
+        .active { display: block; }
+        .start-screen { text-align: center; }
+        .select-label { font-size: 16px; font-weight: bold; margin-bottom: 15px; }
+        .btn-group { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
+        .count-btn {
+            background: #ffffff; border: 2px solid #0f2c59; color: #0f2c59;
+            padding: 10px 25px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: all 0.2s;
         }
-        .active {
-            display: block;
+        .count-btn.selected, .count-btn:hover { background: #0f2c59; color: #ffffff; }
+        .start-action-btn {
+            background: #d92027; /* トリコロール赤 */ color: white; border: none;
+            padding: 14px 40px; font-size: 18px; font-weight: bold; border-radius: 25px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .question-num {
-            font-weight: bold;
-            color: #d92027; /* 赤 */
-            margin-bottom: 8px;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .category-tag {
-            display: inline-block;
-            background-color: #0f2c59; /* 紺 */
-            color: #ffffff;
-            font-size: 12px;
-            padding: 4px 10px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
-        .question-text {
-            font-size: 18px;
-            font-weight: bold;
-            line-height: 1.5;
-            margin-bottom: 25px;
-        }
-        .options-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+        .start-action-btn:hover { background: #b3171e; }
+        .question-num { font-weight: bold; color: #d92027; margin-bottom: 8px; font-size: 14px; letter-spacing: 1px; }
+        .category-tag { display: inline-block; background-color: #0f2c59; color: #ffffff; font-size: 12px; padding: 4px 10px; border-radius: 4px; margin-bottom: 15px; }
+        .question-text { font-size: 18px; font-weight: bold; line-height: 1.5; margin-bottom: 25px; }
+        .options-list { list-style: none; padding: 0; margin: 0; }
         .option-btn {
-            width: 100%;
-            background: #ffffff;
-            border: 2px solid #0f2c59; /* 紺 */
-            color: #0f2c59;
-            padding: 14px 20px;
-            margin-bottom: 14px;
-            border-radius: 8px;
-            text-align: left;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            width: 100%; background: #ffffff; border: 2px solid #0f2c59; color: #0f2c59;
+            padding: 14px 20px; margin-bottom: 14px; border-radius: 8px; text-align: left; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.2s;
         }
-        .option-btn:hover {
-            background: #0f2c59; /* 紺に反転 */
-            color: #ffffff;
-        }
-        .result-screen {
-            text-align: center;
-        }
-        .score {
-            font-size: 36px;
-            font-weight: bold;
-            color: #d92027; /* 赤 */
-            margin: 25px 0;
-        }
-        .restart-btn {
-            background: #d92027; /* 赤 */
-            color: #ffffff;
-            border: none;
-            padding: 14px 35px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 25px;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: background 0.2s;
-        }
-        .restart-btn:hover {
-            background: #b3171e;
-        }
+        .option-btn:hover { background: #0f2c59; color: #ffffff; }
+        .result-screen { text-align: center; }
+        .score { font-size: 36px; font-weight: bold; color: #d92027; margin: 25px 0; }
     </style>
 </head>
 <body>
@@ -118,88 +67,134 @@
 <div class="container">
     <h1>📝 三大和歌集 定期テスト対策クイズ</h1>
 
-    <!-- クイズ画面 -->
-    <div id="quiz-screen" class="quiz-box active">
+    <!-- 1. スタート画面 -->
+    <div id="start-screen" class="screen active start-screen">
+        <p style="font-size:16px; margin-bottom:25px; line-height:1.6;">万葉集・古今和歌集・新古今和歌集の比較テスト対策です。<br>出題される問題は毎回ランダムに変わります。</p>
+        <div class="select-label">挑戦する問題数を選択してください：</div>
+        <div class="btn-group">
+            <button class="count-btn selected" onclick="selectCount(5, this)">5問</button>
+            <button class="count-btn" onclick="selectCount(10, this)">10問</button>
+            <button class="count-btn" onclick="selectCount(15, this)">15問</button>
+        </div>
+        <button class="start-action-btn" onclick="startQuiz()">クイズスタート！</button>
+    </div>
+
+    <!-- 2. クイズ画面 -->
+    <div id="quiz-screen" class="screen">
         <div id="question-number" class="question-num"></div>
         <div id="category-tag" class="category-tag"></div>
         <div id="question-text" class="question-text"></div>
         <ul id="options-container" class="options-list"></ul>
     </div>
 
-    <!-- 結果画面 -->
-    <div id="result-screen" class="quiz-box result-screen">
+    <!-- 3. 結果画面 -->
+    <div id="result-screen" class="screen result-screen">
         <h2>採点結果</h2>
         <div class="score"><span id="correct-count">0</span> / <span id="total-count">0</span> 問正解</div>
         <p id="evaluation-message" style="font-size: 16px; margin-bottom: 30px; line-height: 1.6;"></p>
-        <button class="restart-btn" onclick="restartQuiz()">もう一度挑戦する</button>
+        <button class="start-action-btn" onclick="backToStart()">トップに戻る</button>
     </div>
 </div>
 
 <script>
-    // 提供されたまとめデータに基づく問題セット
-    const quizData = [
-        {
-            category: "万葉集",
-            question: "『万葉集』が成立した時代として正しいものを選びなさい。",
-            options: ["奈良時代末期（759年以降）", "平安時代前期（905年頃）", "鎌倉時代初期（1205年）", "室町時代"],
-            answer: 0
-        },
-        {
-            category: "古今和歌集",
-            question: "醍醐天皇の命によって作られた、最初の「勅撰和歌集」の名前を選びなさい。",
-            options: ["万葉集", "古今和歌集", "新古今和歌集", "八代集"],
-            answer: 1
-        },
-        {
-            category: "新古今和歌集",
-            question: "『新古今和歌集』の主な編者であり、のちの古典文学に大きな影響を与えた人物は誰ですか。",
-            options: ["大伴家持", "紀貫之", "藤原定家", "後鳥羽上皇"],
-            answer: 2
-        },
-        {
-            category: "万葉集",
-            question: "『万葉集』の収録歌数として正しいものを選びなさい。",
-            options: ["約1,100首（全20巻）", "約2,000首（全20巻）", "約4,500首（全20巻）", "約10,000首（全10巻）"],
-            answer: 2
-        },
-        {
-            category: "古今和歌集",
-            question: "『古今和歌集』の歌風（特徴）を表す言葉として、最も適切なものを選びなさい。",
-            options: ["万葉調（ますらをぶり）", "古今調（たおやめぶり）", "新古今調（幽玄）", "写実的で力強い気風"],
-            answer: 1
-        },
-        {
-            category: "新古今和歌集",
-            question: "過去の有名な古い歌の一部を引用して新しい歌を作る、『新古今和歌集』で多用された表現技巧を何と言いますか。",
-            options: ["掛詞（かけことば）", "縁語（えんご）", "枕詞（まくらことば）", "本歌取り（ほんかどり）"],
-            answer: 3
-        },
-        {
-            category: "万葉集",
-            question: "『万葉集』が書かれた際の特徴的な表記方法で、漢字を日本語の音に当てはめて表現したものを何と言いますか。",
-            options: ["万葉仮名", "ひらがな", "カタカナ", "草書体"],
-            answer: 0
-        },
-        {
-            category: "和歌集の比較",
-            question: "歌集の「詠み手の範囲」について、天皇から防人・農民にいたるまで最も幅広い階層の歌が収められている歌集はどれですか。",
-            options: ["万葉集", "古今和歌集", "新古今和歌集", "すべて同じ"],
-            answer: 0
-        }
+    // 比較表から抽出した全45問の定期テスト頻出問題プール
+    const allQuizPool = [
+        // 成立した時代
+        { category: "万葉集", question: "『万葉集』が成立した時代はいつですか。", options: ["奈良時代末期", "平安時代前期", "鎌倉時代初期", "平安時代末期"], answer: 0 },
+        { category: "古今和歌集", question: "『古今和歌集』が成立した時代はいつですか。", options: ["奈良時代末期", "平安時代前期", "鎌倉時代初期", "室町時代"], answer: 1 },
+        { category: "新古今和歌集", question: "『新古今和歌集』が成立した時代はいつですか。", options: ["奈良時代末期", "平安時代前期", "鎌倉時代初期", "室町時代"], answer: 2 },
+        { category: "万葉集", question: "『万葉集』の成立時期として最も正しいものを選びなさい。", options: ["759年以降", "905年頃", "1205年", "1300年頃"], answer: 0 },
+        { category: "古今和歌集", question: "『古今和歌集』の成立時期として最も正しいものを選びなさい。", options: ["759年以降", "905年頃", "1205年", "1000年頃"], answer: 1 },
+        { category: "新古今和歌集", question: "『新古今和歌集』の成立時期として最も正しいものを選びなさい。", options: ["759年以降", "905年頃", "1205年", "1192年頃"], answer: 2 },
+        
+        // 区別
+        { category: "万葉集", question: "『万葉集』は和歌集の歴史においてどのような区別がされますか。", options: ["最初の勅撰和歌集", "第八番目の勅撰和歌集", "日本最古の歌集（私撰集の性格が強い）", "最後の勅撰和歌集"], answer: 2 },
+        { category: "古今和歌集", question: "『古今和歌集』は和歌集の歴史においてどのような区別がされますか。", options: ["日本最古の歌集", "最初の勅撰和歌集", "第八番目の勅撰和歌集", "私撰和歌集"], answer: 1 },
+        { category: "新古今和歌集", question: "『新古今和歌集』は和歌集の歴史においてどのような区別がされますか。", options: ["最初の勅撰和歌集", "第三番目の勅撰和歌集", "第八番目の勅撰和歌集（八代集の最後）", "日本最古の歌集"], answer: 2 },
+        
+        // 主な編者
+        { category: "万葉集", question: "『万葉集』の編纂に深く関わったとされる主な人物は誰ですか。", options: ["大伴家持", "紀貫之", "藤原定家", "後鳥羽上皇"], answer: 0 },
+        { category: "古今和歌集", question: "『古今和歌集』の編纂に関わった人物の組み合わせとして正しいものはどれですか。", options: ["大伴家持、柿本人麻呂", "紀貫之、紀友則、凡河内躬恒、壬生忠岑", "藤原定家、藤原家隆、寂蓮", "後鳥羽上皇、藤原定家"], answer: 1 },
+        { category: "新古今和歌集", question: "『新古今和歌集』の編纂に関わった人物の組み合わせとして正しいものはどれですか。", options: ["大伴家持、紀貫之", "紀貫之、凡河内躬恒", "藤原定家、藤原家隆、寂蓮、飛鳥井雅経ら", "醍醐天皇、後鳥羽上皇"], answer: 2 },
+        { category: "古今和歌集", question: "『古今和歌集』の編者の一人で、ひらがなで「仮名序」を書いた人物は誰ですか。", options: ["紀友則", "凡河内躬恒", "紀貫之", "壬生忠岑"], answer: 2 },
+        { category: "新古今和歌集", question: "『新古今和歌集』の編者の中心人物で、のちに百人一首を選んだことでも有名な歌人は誰ですか。", options: ["大伴家持", "紀貫之", "藤原定家", "寂蓮"], answer: 2 },
+        
+        // 命じた天皇等
+        { category: "古今和歌集", question: "『古今和歌集』の編纂を命じた天皇は誰ですか。", options: ["聖武天皇", "醍醐天皇", "後鳥羽上皇", "天武天皇"], answer: 1 },
+        { category: "新古今和歌集", question: "『新古今和歌集』の編纂を命じたのは誰ですか。", options: ["醍醐天皇", "聖武天皇", "後鳥羽上皇", "藤原定家"], answer: 2 },
+        { category: "万葉集", question: "『万葉集』を命じた天皇等について、正しい説明を選びなさい。", options: ["醍醐天皇が命じた", "後鳥羽上皇が命じた", "なし（私撰集の性格が強い）", "聖武天皇が命じた"], answer: 2 },
+        
+        // 収録歌数
+        { category: "万葉集", question: "『万葉集』の収録歌数はどれくらいですか。", options: ["約1,100首", "約2,000首", "約4,500首", "約10,000首"], answer: 2 },
+        { category: "古今和歌集", question: "『古今和歌集』の収録歌数はどれくらいですか。", options: ["約1,100首", "約2,000首", "約4,500首", "約500首"], answer: 0 },
+        { category: "新古今和歌集", question: "『新古今和歌集』の収録歌数はどれくらいですか。", options: ["約1,100首", "約2,000首", "約4,500首", "約3,000首"], answer: 1 },
+        { category: "和歌集の比較", question: "三大和歌集（万葉・古今・新古今）の構成について、共通する「巻数」は全何巻ですか。", options: ["全10巻", "全20巻", "全30巻", "全5巻"], answer: 1 },
+        
+        // 歌風（特徴）
+        { category: "万葉集", question: "『万葉集』の歌風（特徴）を漢字3文字で表した言葉を選びなさい。", options: ["万葉調", "古今調", "新古今調", "幽玄調"], answer: 0 },
+        { category: "古今和歌集", question: "『古今和歌集』の歌風（特徴）を漢字3文字で表した言葉を選びなさい。", options: ["万葉調", "古今調", "新古今調", "幽玄調"], answer: 1 },
+        { category: "新古今和歌集", question: "『新古今和歌集』の歌風（特徴）を漢字4文字で表した言葉を選びなさい。", options: ["万葉調", "古今調", "新古今調", "幽玄調"], answer: 2 },
+        { category: "万葉集", question: "『万葉集』の歌風のキーワードとして正しいものを選びなさい。", options: ["ますらをぶり", "たおやめぶり", "幽玄", "本歌取り"], answer: 0 },
+        { category: "古今和歌集", question: "『古今和歌集』の歌風のキーワードとして正しいものを選びなさい。", options: ["ますらをぶり", "たおやめぶり", "幽玄", "本歌取り"], answer: 1 },
+        { category: "万葉集", question: "「ますらをぶり」とはどのような気風を意味しますか。", options: ["繊細、優美、知的な気風", "素朴、率直、力強い気風", "妖艶、幽玄、象徴的な気風", "論理的で技巧的な気風"], answer: 1 },
+        { category: "古今和歌集", question: "「たおやめぶり」とはどのような気風を意味しますか。", options: ["素朴、率直、力強い気風", "繊細、優美、知的な気風", "妖艶、幽玄、象徴的な気風", "絵画的で唯美的な気風"], answer: 1 },
+        { category: "新古今和歌集", question: "『新古今和歌集』の歌風（特徴）を表す言葉として正しい組み合わせはどれですか。", options: ["素朴、率直、力強い気風", "繊細、優美、知的な気風", "妖艶、幽玄、象徴的な気風", "写実的でストレートな表現"], answer: 2 },
+        { category: "万葉集", question: "「写実的で感情がストレートに表現される」という特徴を持つ歌集はどれですか。", options: ["万葉集", "古今和歌集", "新古今和歌集", "すべてに共通"], answer: 0 },
+        { category: "古今和歌集", question: "「掛詞や縁語などの技巧、論理的な構成」という特徴を持つ歌集はどれですか。", options: ["万葉集", "古今和歌集", "新古今和歌集", "なし"], answer: 1 },
+        { category: "新古今和歌集", question: "「本歌取りの多用、絵画的・唯美的な世界観」という特徴を持つ歌集はどれですか。", options: ["万葉集", "古今和歌集", "新古今和歌集", "すべて"], answer: 2 },
+        
+        // 詠み手の範囲
+        { category: "万葉集", question: "『万葉集』の詠み手の範囲について正しい説明を選びなさい。", options: ["天皇から防人、農民まで幅広い階層", "貴族や僧侶など宮廷中心の限られた階層", "上皇、貴族、僧侶など、より洗練された知識人層", "武士の階層のみ"], answer: 0 },
+        { category: "古今和歌集", question: "『古今和歌集』の詠み手の範囲について正しい説明を選びなさい。", options: ["天皇から防人、農民まで幅広い階層", "貴族や僧侶など、宮廷中心の限られた階層", "上皇、貴族、僧侶など、より洗練された知識人層", "全国の一般庶民"], answer: 1 },
+        { category: "新古今和歌集", question: "『新古今和歌集』の詠み手の範囲について正しい説明を選びなさい。", options: ["天皇から防人、農民まで幅広い階層", "貴族や僧侶など、宮廷中心の限られた階層", "上皇、貴族、僧侶など、より洗練された知識人層", "武士や農民が中心"], answer: 2 },
+        { category: "和歌集の比較", question: "九州の防備にあたった兵士や農民などの和歌が収録されていることで知られる歌集はどれですか。", options: ["万葉集", "古今和歌集", "新古今和歌集", "八代集すべて"], answer: 0 },
+        
+        // 表記の特徴
+        { category: "万葉集", question: "『万葉集』の表記の特徴として正しいものを選びなさい。", options: ["漢字のみ（万葉仮名）", "かな文字（ひらがな）", "カタカナ表記", "漢字とひらがなの交じり文"], answer: 0 },
+        { category: "古今和歌集", question: "『古今和歌集』の表記の特徴として正しいものを選びなさい。", options: ["漢字のみ（万葉仮名）", "かな文字（ひらがな）", "カタカナ表記", "ローマ字表記"], answer: 1 },
+        { category: "新古今和歌集", question: "『新古今和歌集』の表記の特徴として正しいものを選びなさい。", options: ["漢字のみ（万葉仮名）", "かな文字（ひらがな）", "カタカナ表記", "独自の暗号"], answer: 1 },
+        
+        // 各和歌集の主なポイント
+        { category: "万葉集", question: "漢字を日本語の音に当てはめて記述された、ひらがなが無い時代の文字を何と言いますか。", options: ["万葉仮名", "平仮名", "片仮名", "ローマ字"], answer: 0 },
+        { category: "万葉集", question: "『万葉集』に収録されている、東国の民が詠んだ和歌のことを何と言いますか。", options: ["東歌（あずまうた）", "防人の歌", "仮名序", "本歌取り"], answer: 0 },
+        { category: "古今和歌集", question: "紀貫之が書いた、日本最初の本格的な文学評論としても有名な文章を何と言いますか。", options: ["仮名序（かなじょ）", "万葉仮名", "本歌取り", "幽玄"], answer: 0 },
+        { category: "古今和歌集", question: "ひらがなで書かれた「最初の勅撰和歌集」に該当する作品を選びなさい。", options: ["万葉集", "古今和歌集", "新古今和歌集", "八代集"], answer: 1 },
+        { category: "新古今和歌集", question: "過去の有名な古い歌の一部を引用して新しい歌を作る、新古今時代に流行した表現技巧を何と言いますか。", options: ["掛詞", "縁語", "本歌取り（ほんかどり）", "枕詞"], answer: 2 },
+        { category: "新古今和歌集", question: "『新古今和歌集』において極まった、余韻や情景の美しさを重視する世界観を何と言いますか。", options: ["ますらをぶり", "たおやめぶり", "幽玄（ゆうげん）", "写実主義"], answer: 2 }
     ];
 
+    let selectedQuestionCount = 5;
+    let activeQuizList = [];
     let currentQuestionIndex = 0;
     let score = 0;
 
-    function loadQuestion() {
-        const currentQuiz = quizData[currentQuestionIndex];
+    function selectCount(count, btnElement) {
+        selectedQuestionCount = count;
+        const buttons = document.querySelectorAll('.count-btn');
+        buttons.forEach(btn => btn.classList.remove('selected'));
+        btnElement.classList.add('selected');
+    }
+
+    function startQuiz() {
+        const shuffledPool = [...allQuizPool].sort(() => Math.random() - 0.5);
+        activeQuizList = shuffledPool.slice(0, selectedQuestionCount);
         
-        // テキストの流し込み
-        document.getElementById('question-number').innerText = `Question ${currentQuestionIndex + 1}`;
+        currentQuestionIndex = 0;
+        score = 0;
+
+        document.getElementById('start-screen').classList.remove('active');
+        document.getElementById('quiz-screen').classList.add('active');
+        
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const currentQuiz = activeQuizList[currentQuestionIndex];
+        
+        document.getElementById('question-number').innerText = `第 ${currentQuestionIndex + 1} 問 / 全 ${selectedQuestionCount} 問`;
         document.getElementById('category-tag').innerText = currentQuiz.category;
         document.getElementById('question-text').innerText = currentQuiz.question;
         
-        // 選択肢の生成
         const optionsContainer = document.getElementById('options-container');
         optionsContainer.innerHTML = '';
         
@@ -211,18 +206,19 @@
     }
 
     function checkAnswer(selectedIndex) {
-        const currentQuiz = quizData[currentQuestionIndex];
+        const currentQuiz = activeQuizList[currentQuestionIndex];
         
         if (selectedIndex === currentQuiz.answer) {
             alert("⭕ 正解です！");
             score++;
         } else {
-            alert(`❌ 不正解...\n正解は「${currentQuiz.options[currentQuiz.answer]}」でした。`);
+            alert(`❌ 不正解...
+正解は「${currentQuiz.options[currentQuiz.answer]}」でした。`);
         }
 
         currentQuestionIndex++;
 
-        if (currentQuestionIndex < quizData.length) {
+        if (currentQuestionIndex < activeQuizList.length) {
             loadQuestion();
         } else {
             showResults();
@@ -234,30 +230,24 @@
         document.getElementById('result-screen').classList.add('active');
         
         document.getElementById('correct-count').innerText = score;
-        document.getElementById('total-count').innerText = quizData.length;
+        document.getElementById('total-count').innerText = selectedQuestionCount;
 
         let message = "";
-        const rate = score / quizData.length;
+        const rate = score / selectedQuestionCount;
         if (rate === 1) {
-            message = "パーフェクト！🎉 三大和歌集の基礎知識は完璧です。自信を持ってテストに臨みましょう！";
+            message = "素晴らしい！満点パーフェクトです！💯 三大和歌集の比較知識は完璧に頭に入っています。本番の定期テストでも自信を持って解答してください！";
         } else if (rate >= 0.7) {
-            message = "高得点です！👍 間違えた項目の「成立時代」「編者」「歌風」をもう一度表で確認しておきましょう。";
+            message = "高得点です！👍 間違えた箇所（時代、編者、表現技法など）を比較表でサッと見直すだけで、さらに隙がなくなりますよ。";
         } else {
-            message = "まずは表の「ポイント」から見直してみましょう。特に『万葉仮名』や『本歌取り』などのキーワードが出題されやすいです！";
+            message = "もう少し繰り返し解いて定着させましょう！📖 特に『万葉仮名（万葉集）』『仮名序（古今集）』『本歌取り（新古今集）』の区別が出題されやすいので要チェックです。";
         }
         document.getElementById('evaluation-message').innerText = message;
     }
 
-    function restartQuiz() {
-        currentQuestionIndex = 0;
-        score = 0;
+    function backToStart() {
         document.getElementById('result-screen').classList.remove('active');
-        document.getElementById('quiz-screen').classList.add('active');
-        loadQuestion();
+        document.getElementById('start-screen').classList.add('active');
     }
-
-    // 初回起動
-    loadQuestion();
 </script>
 
 </body>
