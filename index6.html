@@ -3,126 +3,425 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>夏草クイズ</title>
+    <title>源さんアプリ</title>
     <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5a623;
+            --success-color: #2ec4b6;
+            --error-color: #e71d36;
+            --bg-color: #f7f9fc;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
         body {
-            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'BIZ UDPGothic', sans-serif;
-            background-color: #f0f7f4;
-            color: #333;
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
         }
-        #quiz-container {
-            background: #fff;
-            padding: 30px;
+
+        .container {
+            background-color: var(--card-bg);
             border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            width: 90%;
-            max-width: 500px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+        }
+
+        h1 {
             text-align: center;
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 24px;
         }
-        h2 {
-            color: #2e7d32;
+
+        .screen {
+            display: none;
         }
-        .btn {
+
+        .screen.active {
             display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
             width: 100%;
             padding: 12px;
-            margin: 10px 0;
-            background-color: #4caf50;
+            background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 6px;
-            cursor: pointer;
             font-size: 16px;
-            transition: background 0.3s;
-        }
-        .btn:hover {
-            background-color: #388e3c;
-        }
-        #result {
-            font-size: 18px;
             font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: #357abd;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .category-badge {
+            background-color: #e1f0ff;
+            color: var(--primary-color);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: #fff;
+            color: var(--text-color);
+            border: 2px solid #e0e0e0;
+            text-align: left;
+            padding: 14px;
+            font-weight: normal;
+        }
+
+        .option-btn:hover {
+            background-color: #f9f9f9;
+            border-color: #bbb;
+        }
+
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: var(--success-color);
+            color: #155724;
+        }
+
+        .option-btn.incorrect {
+            background-color: #f8d7da;
+            border-color: var(--error-color);
+            color: #721c24;
+        }
+
+        .result-score {
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: var(--secondary-color);
+        }
+
+        .result-details {
             margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        .result-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-<div id="quiz-container">
-    <div id="quiz">
-        <h2 id="question">問題を読み込んでいます...</h2>
-        <div id="options"></div>
+<div class="container">
+    <h1>源さんからの夏草クイズ</h1>
+
+    <div id="setup-screen" class="screen active">
+        <div class="form-group">
+            <label for="category-select">出題カテゴリ:</label>
+            <select id="category-select">
+                <option value="all">すべてミックス</option>
+                <option value="穴埋め">本文穴埋め</option>
+                <option value="読み">重要語句の読み</option>
+                <option value="予想問題">テスト予想問題</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="count-input">出題問題数:</label>
+            <input type="number" id="count-input" min="1" value="5">
+            <small id="max-count-hint" style="color:#666;"></small>
+        </div>
+        <button id="start-btn">クイズをスタート</button>
     </div>
-    <div id="result"></div>
+
+    <div id="quiz-screen" class="screen">
+        <div class="quiz-header">
+            <span id="progress-text">第 1 問 / 5 問</span>
+            <span id="category-type" class="category-badge">カテゴリ</span>
+        </div>
+        <div id="question-box" class="question-text">問題文がここに表示されます。</div>
+        <div id="options-box" class="options-list"></div>
+    </div>
+
+    <div id="result-screen" class="screen">
+        <h2>クイズ結果</h2>
+        <div class="result-score" id="score-text">0 / 0 点</div>
+        <div id="result-comment" style="text-align: center; margin-bottom: 20px; font-weight: bold;"></div>
+        <button id="restart-btn">もう一度挑戦する</button>
+        <div class="result-details" id="result-details-box"></div>
+    </div>
 </div>
 
 <script>
-    const quizData = [
+    const quizDatabase = [
         {
-            question: "俳句「夏草や 兵どもが 夢のあと」を詠んだ詩人は誰？",
-            options: ["松尾芭蕉", "与謝蕪村", "正岡子規", "小林一茶"],
-            answer: 0
+            category: "穴埋め",
+            question: "吾輩は猫である。名前は（　　）まだ無い。",
+            options: ["どこで生まれたか", "何というのか", "生きていくのは", "どこへ行くのか"],
+            answer: "どこで生まれたか"
         },
         {
-            question: "「夏草」が季語として表す季節はいつ？",
-            options: ["春", "夏", "秋", "冬"],
-            answer: 1
+            category: "穴埋め",
+            question: "国境の長いトンネルを抜けると（　　）であった。",
+            options: ["雪国", "海", "都会", "夜の街"],
+            answer: "雪国"
         },
         {
-            question: "芭蕉がこの句を詠んだとされる、平泉の有名な遺跡はどれ？",
-            options: ["中尊寺", "毛越寺", "金剛堂", "高館義経堂"],
-            answer: 3
+            category: "穴埋め",
+            question: "メロスは激怒した。必ず、かの（　　）を除かなければならぬと決意した。",
+            options: ["邪智暴虐の王", "巨大な悪魔", "冷酷な独裁者", "貪欲な地主"],
+            answer: "邪智暴虐の王"
+        },
+        {
+            category: "読み",
+            question: "「凡例」の正しい読み方を選びなさい。",
+            options: ["はんれい", "ぼんれい", "ぱんれい", "ぼんれつ"],
+            answer: "はんれい"
+        },
+        {
+            category: "読み",
+            question: "「出納」の正しい読み方を選びなさい。",
+            options: ["すいとう", "しゅつのう", "でいり", "しゅつなう"],
+            answer: "すいとう"
+        },
+        {
+            category: "読み",
+            question: "「相殺」の正しい読み方を選びなさい。",
+            options: ["そうさい", "そうさつ", "あいさつ", "あいさい"],
+            answer: "そうさい"
+        },
+        {
+            category: "予想問題",
+            question: "日本で一番高い山は富士山ですが、二番目に高い山はどれか。",
+            options: ["北岳", "奥穂高岳", "槍ヶ岳", "間ノ岳"],
+            answer: "北岳"
+        },
+        {
+            category: "予想問題",
+            question: "光が1年間に進む距離を基準とした、天文学で使われる距離の単位は何か。",
+            options: ["光年", "天文単位", "パーセク", "キロメートル"],
+            answer: "光年"
+        },
+        {
+            category: "予想問題",
+            question: "1600年に起こり、徳川家康が勝利して天下分け目の戦いと呼ばれた合戦は何か。",
+            options: ["関ヶ原の戦い", "本能寺の変", "桶狭間の戦い", "川中島の戦い"],
+            answer: "関ヶ原の戦い"
         }
     ];
 
-    let currentQuiz = 0;
+    let currentQuestions = [];
+    let currentIdx = 0;
     let score = 0;
+    let answered = false;
+    let userHistory = [];
 
-    const questionEl = document.getElementById("question");
-    const optionsEl = document.getElementById("options");
-    const resultEl = document.getElementById("result");
+    const setupScreen = document.getElementById('setup-screen');
+    const quizScreen = document.getElementById('quiz-screen');
+    const resultScreen = document.getElementById('result-screen');
+    
+    const categorySelect = document.getElementById('category-select');
+    const countInput = document.getElementById('count-input');
+    const maxCountHint = document.getElementById('max-count-hint');
+    
+    const startBtn = document.getElementById('start-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    
+    const progressText = document.getElementById('progress-text');
+    const categoryType = document.getElementById('category-type');
+    const questionBox = document.getElementById('question-box');
+    const optionsBox = document.getElementById('options-box');
+    
+    const scoreText = document.getElementById('score-text');
+    const resultComment = document.getElementById('result-comment');
+    const resultDetailsBox = document.getElementById('result-details-box');
 
-    function loadQuiz() {
-        deselectAnswers();
-        const currentQuizData = quizData[currentQuiz];
-        questionEl.innerText = `${currentQuiz + 1}. ${currentQuizData.question}`;
+    function updateMaxCountHint() {
+        const selectedCat = categorySelect.value;
+        const availableCount = selectedCat === 'all' 
+            ? quizDatabase.length 
+            : quizDatabase.filter(q => q.category === selectedCat).length;
         
-        currentQuizData.options.forEach((option, index) => {
-            const button = document.createElement("button");
-            button.innerText = option;
-            button.classList.add("btn");
-            button.addEventListener("click", () => selectAnswer(index));
-            optionsEl.appendChild(button);
+        maxCountHint.textContent = `最大 ${availableCount} 問選択可能`;
+        countInput.max = availableCount;
+        if(parseInt(countInput.value) > availableCount) {
+            countInput.value = availableCount;
+        }
+    }
+    categorySelect.addEventListener('change', updateMaxCountHint);
+    updateMaxCountHint();
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    startBtn.addEventListener('click', () => {
+        const selectedCat = categorySelect.value;
+        let targetPool = selectedCat === 'all' 
+            ? [...quizDatabase] 
+            : quizDatabase.filter(q => q.category === selectedCat);
+
+        shuffleArray(targetPool);
+
+        const requestedCount = Math.min(parseInt(countInput.value) || 5, targetPool.length);
+        currentQuestions = targetPool.slice(0, requestedCount);
+
+        currentIdx = 0;
+        score = 0;
+        userHistory = [];
+        
+        setupScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        
+        showQuestion();
+    });
+
+    function showQuestion() {
+        answered = false;
+        optionsBox.innerHTML = '';
+        
+        const q = currentQuestions[currentIdx];
+        
+        progressText.textContent = `第 ${currentIdx + 1} 問 / ${currentQuestions.length} 問`;
+        categoryType.textContent = q.category;
+        questionBox.textContent = q.question;
+        
+        const shuffledOptions = shuffleArray([...q.options]);
+        
+        shuffledOptions.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.textContent = opt;
+            btn.addEventListener('click', () => selectOption(btn, opt, q.answer));
+            optionsBox.appendChild(btn);
         });
     }
 
-    function deselectAnswers() {
-        optionsEl.innerHTML = "";
-    }
+    function selectOption(selectedBtn, selectedOpt, correctOpt) {
+        if (answered) return;
+        answered = true;
 
-    function selectAnswer(index) {
-        if (index === quizData[currentQuiz].answer) {
+        const isCorrect = selectedOpt === correctOpt;
+        if (isCorrect) {
             score++;
-        }
-        currentQuiz++;
-        if (currentQuiz < quizData.length) {
-            loadQuiz();
+            selectedBtn.classList.add('correct');
         } else {
-            showResult();
+            selectedBtn.classList.add('incorrect');
+            Array.from(optionsBox.children).forEach(btn => {
+                if (btn.textContent === correctOpt) {
+                    btn.classList.add('correct');
+                }
+            });
         }
+
+        userHistory.push({
+            question: currentQuestions[currentIdx].question,
+            isCorrect: isCorrect,
+            correctAnswer: correctOpt
+        });
+
+        setTimeout(() => {
+            currentIdx++;
+            if (currentIdx < currentQuestions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }, 1500);
     }
 
     function showResult() {
-        document.getElementById("quiz").style.display = "none";
-        resultEl.innerText = `クイズ終了！ あなたのスコアは ${quizData.length}問中 ${score}問正解です。`;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+        
+        scoreText.textContent = `${currentQuestions.length} 問中 ${score} 問正解！`;
+        
+        const rate = score / currentQuestions.length;
+        if (rate === 1) resultComment.textContent = "素晴らしい！パーフェクトです！ 🎉";
+        else if (rate >= 0.7) resultComment.textContent = "高得点！その調子です！ 👍";
+        else if (rate >= 0.4) resultComment.textContent = "まずまずです。復習してみましょう。 💪";
+        else resultComment.textContent = "もう一度教科書を確認してみよう！ 📝";
+
+        resultDetailsBox.innerHTML = '<h3>出題内容の振り返り</h3>';
+        userHistory.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'result-item';
+            div.innerHTML = `
+                <strong>問${index + 1}: ${item.question}</strong><br>
+                結果: ${item.isCorrect ? '<span style="color:var(--success-color)">正解 ◯</span>' : '<span style="color:var(--error-color)">不正解 ✕</span>'}<br>
+                正解: ${item.correctAnswer}
+            `;
+            resultDetailsBox.appendChild(div);
+        });
     }
 
-    loadQuiz();
+    restartBtn.addEventListener('click', () => {
+        resultScreen.classList.remove('active');
+        setupScreen.classList.add('active');
+        updateMaxCountHint();
+    });
 </script>
-
 </body>
 </html>
