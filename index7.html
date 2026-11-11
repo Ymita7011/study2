@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭科 期末テストクイズ</title>
+
+<style>
+body{
+    font-family:sans-serif;
+    max-width:900px;
+    margin:auto;
+    padding:20px;
+    background:#f5f7fb;
+}
+
+h1{
+    text-align:center;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+button{
+    padding:10px 20px;
+    margin:5px;
+    cursor:pointer;
+}
+
+.choice{
+    display:block;
+    width:100%;
+    text-align:left;
+    margin:10px 0;
+}
+
+.correct{
+    background:#c8f7c5;
+}
+.wrong{
+    background:#ffcdd2;
+}
+
+#result{
+    font-size:24px;
+    text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<h1>家庭科 期末テストクイズ</h1>
+
+<div class="card">
+
+<div id="start">
+
+<h2>問題数を選んでください</h2>
+
+<button onclick="startQuiz(5)">5問</button>
+<button onclick="startQuiz(10)">10問</button>
+<button onclick="startQuiz(15)">15問</button>
+
+</div>
+
+<div id="quiz" style="display:none">
+<h2 id="counter"></h2>
+<p id="question"></p>
+<div id="choices"></div>
+</div>
+
+<div id="result" style="display:none"></div>
+
+</div>
+
+<script>
+
+const allQuestions=[
+
+{
+q:"乳児期は何歳から何歳まで？",
+a:["0～1歳","1～3歳","0～3歳","0～6歳"],
+c:0
+},
+{
+q:"幼児期は何歳から何歳まで？",
+a:["0～1歳","1～6歳","6～12歳","12～20歳"],
+c:1
+},
+{
+q:"学童期は何歳から何歳まで？",
+a:["1～6歳","6～12歳","12～20歳","20～65歳"],
+c:1
+},
+{
+q:"青年期は何歳から何歳まで？",
+a:["6～12歳","12～20歳","20～65歳","65歳以上"],
+c:1
+},
+{
+q:"壮年期は何歳から何歳まで？",
+a:["12～20歳","20～65歳","65歳以上","1～6歳"],
+c:1
+},
+{
+q:"老年期は何歳以上？",
+a:["50歳","60歳","65歳","70歳"],
+c:2
+},
+{
+q:"出生時の身長は約？",
+a:["30cm","40cm","50cm","60cm"],
+c:2
+},
+{
+q:"1歳の身長は出生時の約何倍？",
+a:["1倍","1.5倍","2倍","3倍"],
+c:1
+},
+{
+q:"4歳の身長は出生時の約何倍？",
+a:["1.5倍","2倍","3倍","4倍"],
+c:1
+},
+{
+q:"1歳の身長は約？",
+a:["50cm","75cm","100cm","120cm"],
+c:1
+},
+{
+q:"4歳の身長は約？",
+a:["75cm","90cm","100cm","120cm"],
+c:2
+},
+{
+q:"出生時の体重は約？",
+a:["2kg","3kg","4kg","5kg"],
+c:1
+},
+{
+q:"1歳の体重は約？",
+a:["6kg","9kg","12kg","15kg"],
+c:1
+},
+{
+q:"4歳の体重は約？",
+a:["10kg","12kg","15kg","18kg"],
+c:2
+},
+{
+q:"1歳の体重は出生時の約何倍？",
+a:["2倍","3倍","4倍","5倍"],
+c:1
+},
+{
+q:"4歳の体重は出生時の約何倍？",
+a:["3倍","4倍","5倍","6倍"],
+c:2
+},
+{
+q:"幼児の体型の特徴は？",
+a:["足が長い","頭が大きい","腕が長い","首が長い"],
+c:1
+},
+{
+q:"幼児の体温は成人に比べて？",
+a:["低い","同じ","高い","不安定"],
+c:2
+},
+{
+q:"幼児の脈拍は成人に比べて？",
+a:["少ない","多い","同じ","変わらない"],
+c:1
+},
+{
+q:"幼児の呼吸数は成人に比べて？",
+a:["少ない","同じ","多い","測れない"],
+c:2
+},
+{
+q:"幼児の脈拍は30秒間で約？",
+a:["25回","35回","45回","55回"],
+c:3
+},
+{
+q:"寝返りは主に何歳ごろ？",
+a:["0～1歳","2～3歳","3～4歳","5～6歳"],
+c:0
+},
+{
+q:"はいはいは主に何歳ごろ？",
+a:["0～1歳","1～2歳","2～3歳","4～5歳"],
+c:0
+},
+{
+q:"つかまり立ちは主に何歳ごろ？",
+a:["0～1歳","2～3歳","3～4歳","5～6歳"],
+c:0
+},
+{
+q:"一人で歩き始めるのは？",
+a:["0～1歳","1～2歳","2～3歳","4～5歳"],
+c:1
+},
+{
+q:"走り始めるのは？",
+a:["1～2歳","2～3歳","3～4歳","5～6歳"],
+c:0
+},
+{
+q:"転ばずに走るのは？",
+a:["1～2歳","2～3歳","3～4歳","4～5歳"],
+c:1
+},
+{
+q:"両足で飛ぶのは？",
+a:["1～2歳","2～3歳","3～4歳","5～6歳"],
+c:1
+},
+{
+q:"階段の上り下りができるのは？",
+a:["2～3歳","3～4歳","4～5歳","5～6歳"],
+c:1
+},
+{
+q:"片足で跳ぶのは？",
+a:["2～3歳","3～4歳","4～5歳","5～6歳"],
+c:1
+},
+{
+q:"スキップをするのは？",
+a:["2～3歳","3～4歳","4～5歳","5～6歳"],
+c:2
+},
+{
+q:"なわとびをするのは？",
+a:["3～4歳","4～5歳","5～6歳","6～7歳"],
+c:2
+},
+{
+q:"低い鉄棒で前回りをするのは？",
+a:["3～4歳","4～5歳","5～6歳","6～7歳"],
+c:2
+},
+{
+q:"手に触れた物をつかむのは？",
+a:["0～1歳","1～2歳","2～3歳","3～4歳"],
+c:0
+},
+{
+q:"積み木を2～3個積むのは？",
+a:["0～1歳","1～2歳","2～3歳","4～5歳"],
+c:1
+},
+{
+q:"スプーンを使うのは？",
+a:["0～1歳","1～2歳","2～3歳","3～4歳"],
+c:1
+},
+{
+q:"クレヨンで描くのは？",
+a:["1～2歳","2～3歳","3～4歳","4～5歳"],
+c:1
+},
+{
+q:"ボタンをはずすのは？",
+a:["1～2歳","2～3歳","3～4歳","4～5歳"],
+c:1
+},
+{
+q:"はさみを使うのは？",
+a:["2～3歳","3～4歳","4～5歳","5～6歳"],
+c:1
+},
+{
+q:"箸を使うのは？",
+a:["2～3歳","3～4歳","4～5歳","5～6歳"],
+c:1
+},
+{
+q:"はさみとのりで工作するのは？",
+a:["3～4歳","4～5歳","5～6歳","6～7歳"],
+c:1
+},
+{
+q:"鉛筆で書くのは？",
+a:["3～4歳","4～5歳","5～6歳","6～7歳"],
+c:2
+},
+{
+q:"簡単なひも結びができるのは？",
+a:["3～4歳","4～5歳","5～6歳","6～7歳"],
+c:2
+},
+{
+q:"発達の方向性とは？",
+a:["順番がない","一定方向に進む","急に成長する","個人差のこと"],
+c:1
+},
+{
+q:"頭部から下肢への発達を何という？",
+a:["方向性","順序性","個人差","反射"],
+c:0
+},
+{
+q:"中心から末端への発達を何という？",
+a:["方向性","順序性","反射","遺伝"],
+c:0
+},
+{
+q:"順序性とは？",
+a:["個人差","順番が決まっていること","方向のこと","性格のこと"],
+c:1
+},
+{
+q:"発達の順序として正しいものは？",
+a:["立つ→座る→首がすわる",
+"首がすわる→座る→立つ",
+"座る→立つ→首がすわる",
+"立つ→首がすわる→座る"],
+c:1
+},
+{
+q:"発達には何がある？",
+a:["絶対同じ","個人差","例外なし","決まりなし"],
+c:1
+},
+{
+q:"幼児理解で大切なのは？",
+a:["全員同じ成長を期待する",
+"個人差を理解する",
+"競争させる",
+"比較する"],
+c:1
+}
+];
+
+let questions=[];
+let current=0;
+let score=0;
+
+function startQuiz(count){
+
+questions=[...allQuestions]
+.sort(()=>Math.random()-0.5)
+.slice(0,count);
+
+document.getElementById("start").style.display="none";
+document.getElementById("quiz").style.display="block";
+
+showQuestion();
+}
+
+function showQuestion(){
+
+let q=questions[current];
+
+document.getElementById("counter").textContent=
+`${current+1}/${questions.length}`;
+
+document.getElementById("question").textContent=q.q;
+
+let html="";
+
+q.a.forEach((choice,index)=>{
+
+html+=`
+<button class="choice"
+onclick="answer(${index})">
+${choice}
+</button>
+`;
+
+});
+
+document.getElementById("choices").innerHTML=html;
+}
+
+function answer(index){
+
+const q=questions[current];
+
+if(index===q.c){
+score++;
+}
+
+current++;
+
+if(current<questions.length){
+showQuestion();
+}
+else{
+finishQuiz();
+}
+}
+
+function finishQuiz(){
+
+document.getElementById("quiz").style.display="none";
+
+document.getElementById("result").style.display="block";
+
+document.getElementById("result").innerHTML=
+`
+<h2>結果</h2>
+<p>${questions.length}問中 ${score}問正解</p>
+<button onclick="location.reload()">
+もう一度挑戦
+</button>
+`;
+}
+
+</script>
+
+</body>
+</html>
