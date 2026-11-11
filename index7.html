@@ -6,53 +6,53 @@
 <title>家庭科クイズ</title>
 
 <style>
-body{
+body {
     font-family: "Yu Gothic", sans-serif;
-    background:#f5f7fb;
-    margin:0;
-    padding:20px;
+    background: #f5f7fb;
+    margin: 0;
+    padding: 20px;
 }
 
-.container{
-    max-width:900px;
-    margin:auto;
+.container {
+    max-width: 900px;
+    margin: auto;
 }
 
-.card{
-    background:white;
-    border-radius:12px;
-    padding:25px;
-    box-shadow:0 0 10px rgba(0,0,0,0.15);
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 }
 
-h1{
-    text-align:center;
+h1 {
+    text-align: center;
 }
 
-button{
-    padding:10px 20px;
-    margin:5px;
-    font-size:16px;
-    cursor:pointer;
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    cursor: pointer;
 }
 
-.choice{
-    display:block;
-    width:100%;
-    margin:10px 0;
-    text-align:left;
+.choice {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    text-align: left;
 }
 
-.correct{
-    background:#b9f6ca;
+.correct {
+    background: #b9f6ca;
 }
 
-.wrong{
-    background:#ffcccb;
+.wrong {
+    background: #ffcccb;
 }
 
-.large{
-    font-size:24px;
+.large {
+    font-size: 24px;
 }
 </style>
 </head>
@@ -68,9 +68,9 @@ button{
 
 <h2>問題数を選んでください</h2>
 
-<button onclick="startQuiz(5)">5問</button>
-<button onclick="startQuiz(10)">10問</button>
-<button onclick="startQuiz(15)">15問</button>
+<button type="button" onclick="startQuiz(5)">5問</button>
+<button type="button" onclick="startQuiz(10)">10問</button>
+<button type="button" onclick="startQuiz(15)">15問</button>
 
 </div>
 
@@ -90,290 +90,165 @@ button{
 </div>
 
 <script>
-
 const allQuestions = [
-// ===== 追加問題(40→60問) =====
-
-{q:"人の一生で最初の区分は？",
-a:["幼児期","乳児期","学童期","青年期"],c:1},
-
-{q:"学童期の次の区分は？",
-a:["幼児期","壮年期","青年期","老年期"],c:2},
-
-{q:"壮年期の次の区分は？",
-a:["青年期","学童期","老年期","乳児期"],c:2},
-
-{q:"出生時の身長約50cmが2倍になると何cm？",
-a:["75cm","90cm","100cm","120cm"],c:2},
-
-{q:"出生時体重3kgの3倍は？",
-a:["6kg","9kg","12kg","15kg"],c:1},
-
-{q:"出生時体重3kgの5倍は？",
-a:["9kg","12kg","15kg","18kg"],c:2},
-
-{q:"幼児の特徴として正しいものは？",
-a:["頭が大きい","足が長い","成人と同じ体型","首が長い"],c:0},
-
-{q:"成人と比べた幼児の特徴で正しいものは？",
-a:["体温が低い","体温が高い","脈拍が少ない","呼吸数が少ない"],c:1},
-
-{q:"成人と比べた幼児の呼吸数は？",
-a:["少ない","変わらない","多い","測れない"],c:2},
-
-{q:"0〜1歳の運動発達として適切なのは？",
-a:["スキップ","寝返り","前回り","なわとび"],c:1},
-
-{q:"1〜2歳の運動発達として適切なのは？",
-a:["一人で歩く","片足跳び","スキップ","なわとび"],c:0},
-
-{q:"2〜3歳の運動発達として適切なのは？",
-a:["転ばず走る","スキップ","前回り","なわとび"],c:0},
-
-{q:"3〜4歳の運動発達として適切なのは？",
-a:["なわとび","三輪車をこぐ","スキップ","前回り"],c:1},
-
-{q:"4〜5歳の運動発達として適切なのは？",
-a:["スキップ","はいはい","つかまり立ち","寝返り"],c:0},
-
-{q:"5〜6歳の運動発達として適切なのは？",
-a:["なわとび","三輪車","はいはい","一人歩き"],c:0},
-
-{q:"1〜2歳の手先の発達として正しいものは？",
-a:["鉛筆を書く","スプーンを使う","ひも結び","箸を上手に使う"],c:1},
-
-{q:"2〜3歳の手先の発達として正しいものは？",
-a:["クレヨンで描く","工作をする","ひも結び","鉛筆を書く"],c:0},
-
-{q:"3〜4歳の手先の発達として正しいものは？",
-a:["はさみを使う","ひも結び","工作","鉛筆"],c:0},
-
-{q:"方向性の例として正しいものは？",
-a:["頭から足へ発達する",
-"全員同じ速さで成長する",
-"必ず同じ身長になる",
-"個人差がない"],c:0},
-
-{q:"発達を考える際に大切なことは？",
-a:["全員同じ成長を期待する",
-"他人と比較する",
-"個人差を理解する",
-"成長の順序を無視する"],c:2}
-{q:"乳児期は何歳から何歳？",a:["0～1歳","1～6歳","6～12歳","12～20歳"],c:0},
-
-{q:"幼児期は何歳から何歳？",a:["0～1歳","1～6歳","6～12歳","20～65歳"],c:1},
-
-{q:"学童期は？",a:["1～6歳","6～12歳","12～20歳","65歳以上"],c:1},
-
-{q:"青年期は？",a:["6～12歳","12～20歳","20～65歳","65歳以上"],c:1},
-
-{q:"壮年期は？",a:["12～20歳","20～65歳","65歳以上","0～6歳"],c:1},
-
-{q:"老年期は何歳以上？",a:["55","60","65","70"],c:2},
-
-{q:"出生時の身長は約？",a:["40cm","50cm","60cm","70cm"],c:1},
-
-{q:"1歳の身長は出生時の約何倍？",a:["1倍","1.5倍","2倍","3倍"],c:1},
-
-{q:"4歳の身長は出生時の約？",a:["1.5倍","2倍","3倍","4倍"],c:1},
-
-{q:"出生時の体重は約？",a:["2kg","3kg","4kg","5kg"],c:1},
-
-{q:"1歳の体重は約？",a:["6kg","9kg","12kg","15kg"],c:1},
-
-{q:"4歳の体重は約？",a:["10kg","12kg","15kg","18kg"],c:2},
-
-{q:"幼児の体型は？",a:["頭が大きい","頭が小さい","腕が長い","首が長い"],c:0},
-
-{q:"幼児の体温は成人と比べて？",a:["低い","同じ","高い","測れない"],c:2},
-
-{q:"幼児の脈拍は成人と比べて？",a:["少ない","多い","同じ","変わらない"],c:1},
-
-{q:"幼児の呼吸数は成人と比べて？",a:["少ない","同じ","多い","分からない"],c:2},
-
-{q:"30秒間の幼児の脈拍数は？",a:["35回","45回","55回","65回"],c:2},
-
-{q:"寝返りは何歳ごろ？",a:["0～1歳","1～2歳","2～3歳","3～4歳"],c:0},
-
-{q:"はいはいは何歳ごろ？",a:["0～1歳","2～3歳","3～4歳","4～5歳"],c:0},
-
-{q:"つかまり立ちは何歳ごろ？",a:["0～1歳","1～2歳","2～3歳","4～5歳"],c:0},
-
-{q:"一人で歩くのは？",a:["0～1歳","1～2歳","2～3歳","3～4歳"],c:1},
-
-{q:"転ばずに走るのは？",a:["1～2歳","2～3歳","3～4歳","4～5歳"],c:1},
-
-{q:"両足で跳ぶのは？",a:["1～2歳","2～3歳","3～4歳","4～5歳"],c:1},
-
-{q:"階段の上り下りは？",a:["2～3歳","3～4歳","4～5歳","5～6歳"],c:1},
-
-{q:"スキップをするのは？",a:["2～3歳","3～4歳","4～5歳","5～6歳"],c:2},
-
-{q:"なわとびをするのは？",a:["3～4歳","4～5歳","5～6歳","6～7歳"],c:2},
-
-{q:"手に触れた物をつかむのは？",a:["0～1歳","1～2歳","2～3歳","3～4歳"],c:0},
-
-{q:"積み木を2～3個積むのは？",a:["0～1歳","1～2歳","2～3歳","3～4歳"],c:1},
-
-{q:"スプーンを使うのは？",a:["0～1歳","1～2歳","2～3歳","3～4歳"],c:1},
-
-{q:"クレヨンで描くのは？",a:["1～2歳","2～3歳","3～4歳","4～5歳"],c:1},
-
-{q:"ボタンを外すのは？",a:["1～2歳","2～3歳","3～4歳","4～5歳"],c:1},
-
-{q:"はさみを使うのは？",a:["2～3歳","3～4歳","4～5歳","5～6歳"],c:1},
-
-{q:"箸を使うのは？",a:["2～3歳","3～4歳","4～5歳","5～6歳"],c:1},
-
-{q:"鉛筆で書くのは？",a:["3～4歳","4～5歳","5～6歳","6～7歳"],c:2},
-
-{q:"発達の方向性とは？",a:["一定方向に進む","順番がない","個人差","遺伝"],c:0},
-
-{q:"頭部から下肢への発達を表す言葉は？",a:["方向性","順序性","個人差","環境"],c:0},
-
-{q:"順序性とは？",a:["順番があること","方向","能力","学習"],c:0},
-
-{q:"正しい発達順序は？",a:[
-"立つ→座る→首がすわる",
-"首がすわる→座る→立つ",
-"座る→立つ→首がすわる",
-"立つ→首がすわる→座る"
-],c:1},
-
-{q:"発達には何がある？",a:["個人差","絶対同じ","差はない","全員同時"],c:0}
-
+    { q: "人の一生で最初の区分は？", a: ["幼児期", "乳児期", "学童期", "青年期"], c: 1 },
+    { q: "学童期の次の区分は？", a: ["幼児期", "壮年期", "青年期", "老年期"], c: 2 },
+    { q: "壮年期の次の区分は？", a: ["青年期", "学童期", "老年期", "乳児期"], c: 2 },
+    { q: "出生時の身長約50cmが2倍になると何cm？", a: ["75cm", "90cm", "100cm", "120cm"], c: 2 },
+    { q: "出生時体重3kgの3倍は？", a: ["6kg", "9kg", "12kg", "15kg"], c: 1 },
+    { q: "出生時体重3kgの5倍は？", a: ["9kg", "12kg", "15kg", "18kg"], c: 2 },
+    { q: "幼児の特徴として正しいものは？", a: ["頭が大きい", "足が長い", "成人と同じ体型", "首が長い"], c: 0 },
+    { q: "成人と比べた幼児の特徴で正しいものは？", a: ["体温が低い", "体温が高い", "脈拍が少ない", "呼吸数が少ない"], c: 1 },
+    { q: "成人と比べた幼児の呼吸数は？", a: ["少ない", "変わらない", "多い", "測れない"], c: 2 },
+    { q: "0〜1歳の運動発達として適切なのは？", a: ["スキップ", "寝返り", "前回り", "なわとび"], c: 1 },
+    { q: "1〜2歳の運動発達として適切なのは？", a: ["一人で歩く", "片足跳び", "スキップ", "なわとび"], c: 0 },
+    { q: "2〜3歳の運動発達として適切なのは？", a: ["転ばず走る", "スキップ", "前回り", "なわとび"], c: 0 },
+    { q: "3〜4歳の運動発達として適切なのは？", a: ["なわとび", "三輪車をこぐ", "スキップ", "前回り"], c: 1 },
+    { q: "4〜5歳の運動発達として適切なのは？", a: ["スキップ", "はいはい", "つかまり立ち", "寝返り"], c: 0 },
+    { q: "5〜6歳の運動発達として適切なのは？", a: ["なわとび", "三輪車", "はいはい", "一人歩き"], c: 0 },
+    { q: "1〜2歳の手先の発達として正しいものは？", a: ["鉛筆を書く", "スプーンを使う", "ひも結び", "箸を上手に使う"], c: 1 },
+    { q: "2〜3歳の手先の発達として正しいものは？", a: ["クレヨンで描く", "工作をする", "ひも結び", "鉛筆を書く"], c: 0 },
+    { q: "3〜4歳の手先の発達として正しいものは？", a: ["はさみを使う", "ひも結び", "工作", "鉛筆"], c: 0 },
+    { q: "方向性の例として正しいものは？", a: ["頭から足へ発達する", "全員同じ速さで成長する", "必ず同じ身長になる", "個人差がない"], c: 0 },
+    { q: "発達を考える際に大切なことは？", a: ["全員同じ成長を期待する", "他人と比較する", "個人差を理解する", "成長の順序を無視する"], c: 2 },
+    { q: "乳児期は何歳から何歳？", a: ["0～1歳", "1～6歳", "6～12歳", "12～20歳"], c: 0 },
+    { q: "幼児期は何歳から何歳？", a: ["0～1歳", "1～6歳", "6～12歳", "20～65歳"], c: 1 },
+    { q: "学童期は？", a: ["1～6歳", "6～12歳", "12～20歳", "65歳以上"], c: 1 },
+    { q: "青年期は？", a: ["6～12歳", "12～20歳", "20～65歳", "65歳以上"], c: 1 },
+    { q: "壮年期は？", a: ["12～20歳", "20～65歳", "65歳以上", "0～6歳"], c: 1 },
+    { q: "老年期は何歳以上？", a: ["55", "60", "65", "70"], c: 2 },
+    { q: "出生時の身長は約？", a: ["40cm", "50cm", "60cm", "70cm"], c: 1 },
+    { q: "1歳の身長は出生時の約何倍？", a: ["1倍", "1.5倍", "2倍", "3倍"], c: 1 },
+    { q: "4歳の身長は出生時の約？", a: ["1.5倍", "2倍", "3倍", "4倍"], c: 1 },
+    { q: "出生時の体重は約？", a: ["2kg", "3kg", "4kg", "5kg"], c: 1 },
+    { q: "1歳の体重は約？", a: ["6kg", "9kg", "12kg", "15kg"], c: 1 },
+    { q: "4歳の体重は約？", a: ["10kg", "12kg", "15kg", "18kg"], c: 2 },
+    { q: "幼児の体型は？", a: ["頭が大きい", "頭が小さい", "腕が長い", "首が長い"], c: 0 },
+    { q: "幼児の体温は成人と比べて？", a: ["低い", "同じ", "高い", "測れない"], c: 2 },
+    { q: "幼児の脈拍は成人と比べて？", a: ["少ない", "多い", "同じ", "変わらない"], c: 1 },
+    { q: "幼児の呼吸数は成人と比べて？", a: ["少ない", "同じ", "多い", "分からない"], c: 2 },
+    { q: "30秒間の幼児の脈拍数は？", a: ["35回", "45回", "55回", "65回"], c: 2 },
+    { q: "寝返りは何歳ごろ？", a: ["0～1歳", "1～2歳", "2～3歳", "3～4歳"], c: 0 },
+    { q: "はいはいは何歳ごろ？", a: ["0～1歳", "2～3歳", "3～4歳", "4～5歳"], c: 0 },
+    { q: "つかまり立ちは何歳ごろ？", a: ["0～1歳", "1～2歳", "2～3歳", "4～5歳"], c: 0 },
+    { q: "一人で歩くのは？", a: ["0～1歳", "1～2歳", "2～3歳", "3～4歳"], c: 1 },
+    { q: "転ばずに走るのは？", a: ["1～2歳", "2～3歳", "3～4歳", "4～5歳"], c: 1 },
+    { q: "両足で跳ぶのは？", a: ["1～2歳", "2～3歳", "3～4歳", "4～5歳"], c: 1 },
+    { q: "階段の上り下りは？", a: ["2～3歳", "3～4歳", "4～5歳", "5～6歳"], c: 1 },
+    { q: "スキップをするのは？", a: ["2～3歳", "3～4歳", "4～5歳", "5～6歳"], c: 2 },
+    { q: "なわとびをするのは？", a: ["3～4歳", "4～5歳", "5～6歳", "6～7歳"], c: 2 },
+    { q: "手に触れた物をつかむのは？", a: ["0～1歳", "1～2歳", "2～3歳", "3～4歳"], c: 0 },
+    { q: "積み木を2～3個積むのは？", a: ["0～1歳", "1～2歳", "2～3歳", "3～4歳"], c: 1 },
+    { q: "スプーンを使うのは？", a: ["0～1歳", "1～2歳", "2～3歳", "3～4歳"], c: 1 },
+    { q: "クレヨンで描くのは？", a: ["1～2歳", "2～3歳", "3～4歳", "4～5歳"], c: 1 },
+    { q: "ボタンを外すのは？", a: ["1～2歳", "2～3歳", "3～4歳", "4～5歳"], c: 1 },
+    { q: "はさみを使うのは？", a: ["2～3歳", "3～4歳", "4～5歳", "5～6歳"], c: 1 },
+    { q: "箸を使うのは？", a: ["2～3歳", "3～4歳", "4～5歳", "5～6歳"], c: 1 },
+    { q: "鉛筆で書くのは？", a: ["3～4歳", "4～5歳", "5～6歳", "6～7歳"], c: 2 },
+    { q: "発達の方向性とは？", a: ["一定方向に進む", "順番がない", "個人差", "遺伝"], c: 0 },
+    { q: "頭部から下肢への発達を表す言葉は？", a: ["方向性", "順序性", "個人差", "環境"], c: 0 },
+    { q: "順序性とは？", a: ["順番があること", "方向", "能力", "学習"], c: 0 },
+    { q: "正しい発達順序は？", a: ["立つ→座る→首がすわる", "首がすわる→座る→立つ", "座る→立つ→首がすわる", "立つ→首がすわる→座る"], c: 1 },
+    { q: "発達には何がある？", a: ["個人差", "絶対同じ", "差はない", "全員同時"], c: 0 }
 ];
 
-let questions=[];
-let current=0;
-let score=0;
+let questions = [];
+let current = 0;
+let score = 0;
 
-function startQuiz(count){
+function startQuiz(count) {
+    const safeCount = Math.min(Math.max(parseInt(count, 10) || 0, 1), allQuestions.length);
+    questions = [...allQuestions]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, safeCount);
 
-questions=[...allQuestions]
-.sort(()=>Math.random()-0.5)
-.slice(0,count);
+    current = 0;
+    score = 0;
 
-current=0;
-score=0;
+    document.getElementById("start").style.display = "none";
+    document.getElementById("result").style.display = "none";
+    document.getElementById("quiz").style.display = "block";
 
-document.getElementById("start").style.display="none";
-document.getElementById("result").style.display="none";
-document.getElementById("quiz").style.display="block";
-
-showQuestion();
+    showQuestion();
 }
 
-function showQuestion(){
+function showQuestion() {
+    const q = questions[current];
+    if (!q) return;
 
-const q=questions[current];
+    document.getElementById("counter").innerText = `${current + 1} / ${questions.length}`;
+    document.getElementById("question").innerText = q.q;
 
-document.getElementById("counter").innerText=
-`${current+1} / ${questions.length}`;
+    let html = "";
+    q.a.forEach((choice, index) => {
+        html += `
+            <button type="button" class="choice" onclick="answer(${index})">
+                ${choice}
+            </button>
+        `;
+    });
 
-document.getElementById("question").innerText=q.q;
-
-let html="";
-
-q.a.forEach((choice,index)=>{
-
-html+=`
-<button class="choice"
-onclick="answer(${index})">
-${choice}
-</button>
-`;
-
-});
-
-document.getElementById("choices").innerHTML=html;
+    document.getElementById("choices").innerHTML = html;
 }
 
-function answer(index){
+function answer(index) {
+    const q = questions[current];
+    if (!q) return;
 
-const q=questions[current];
+    const buttons = document.querySelectorAll(".choice");
+    buttons.forEach(btn => btn.disabled = true);
 
-const buttons=document.querySelectorAll(".choice");
+    if (index === q.c) {
+        score++;
+        buttons[index].classList.add("correct");
+        document.getElementById("choices").innerHTML += `
+            <h3 style="color:green">○ 正解！</h3>
+        `;
+    } else {
+        buttons[index].classList.add("wrong");
+        buttons[q.c].classList.add("correct");
 
-buttons.forEach(btn=>btn.disabled=true);
+        document.getElementById("choices").innerHTML += `
+            <h3 style="color:red">× 不正解</h3>
+            <p>正解：${q.a[q.c]}</p>
+        `;
+    }
 
-if(index===q.c){
+    setTimeout(() => {
+        current++;
 
-score++;
-
-buttons[index].classList.add("correct");
-
-document.getElementById("choices").innerHTML+=`
-<h3 style="color:green">○ 正解！</h3>
-`;
-
-}else{
-
-buttons[index].classList.add("wrong");
-buttons[q.c].classList.add("correct");
-
-document.getElementById("choices").innerHTML+=`
-<h3 style="color:red">× 不正解</h3>
-<p>正解：${q.a[q.c]}</p>
-`;
-
+        if (current < questions.length) {
+            showQuestion();
+        } else {
+            finishQuiz();
+        }
+    }, 1500);
 }
 
-setTimeout(()=>{
+function finishQuiz() {
+    const rate = Math.round((score / questions.length) * 100);
 
-current++;
+    let rank = "D";
+    if (rate >= 90) rank = "S";
+    else if (rate >= 80) rank = "A";
+    else if (rate >= 70) rank = "B";
+    else if (rate >= 60) rank = "C";
 
-if(current<questions.length){
+    document.getElementById("quiz").style.display = "none";
+    document.getElementById("result").style.display = "block";
 
-showQuestion();
+    document.getElementById("result").innerHTML = `
+        <h2>結果発表</h2>
+        <p>${score} / ${questions.length}問 正解</p>
+        <p>正答率 ${rate}%</p>
+        <h2>ランク ${rank}</h2>
+        <p>5秒後にトップへ戻ります</p>
+    `;
 
-}else{
-
-finishQuiz();
-
-}
-
-},1500);
-
-}
-
-function finishQuiz(){
-
-const rate=Math.round(
-(score/questions.length)*100
-);
-
-let rank="D";
-
-if(rate>=90) rank="S";
-else if(rate>=80) rank="A";
-else if(rate>=70) rank="B";
-else if(rate>=60) rank="C";
-
-document.getElementById("quiz").style.display="none";
-
-document.getElementById("result").style.display="block";
-
-document.getElementById("result").innerHTML=
-`
-<h2>結果発表</h2>
-
-<p>${score} / ${questions.length}問 正解</p>
-
-<p>正答率 ${rate}%</p>
-
-<h2>ランク ${rank}</h2>
-
-<p>5秒後にトップへ戻ります</p>
-`;
-
-setTimeout(()=>{
-
-document.getElementById("result").style.display="none";
-document.getElementById("start").style.display="block";
-
-},5000);
-
+    setTimeout(() => {
+        document.getElementById("result").style.display = "none";
+        document.getElementById("start").style.display = "block";
+    }, 5000);
 }
 </script>
 
