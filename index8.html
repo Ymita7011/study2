@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>技術科クイズ</title>
+
+<style>
+body{
+    font-family:sans-serif;
+    text-align:center;
+    background:#f5f5f5;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    background:white;
+    max-width:800px;
+    margin:auto;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.2);
+}
+
+button{
+    padding:10px 20px;
+    margin:10px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.choice{
+    display:block;
+    width:90%;
+    margin:10px auto;
+}
+
+.correct{
+    color:green;
+    font-size:24px;
+}
+
+.wrong{
+    color:red;
+    font-size:24px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div id="start">
+
+<h1>技術科 期末テストクイズ</h1>
+
+<p>問題数を選択してください</p>
+
+<button onclick="startQuiz(5)">5問</button>
+<button onclick="startQuiz(10)">10問</button>
+<button onclick="startQuiz(15)">15問</button>
+
+</div>
+
+<div id="quiz" style="display:none;">
+<h2 id="count"></h2>
+<h3 id="question"></h3>
+
+<div id="choices"></div>
+
+<div id="result"></div>
+</div>
+
+<div id="finish" style="display:none;">
+<h2>終了！</h2>
+
+<p id="score"></p>
+
+<button onclick="location.reload()">TOPへ戻る</button>
+
+</div>
+
+</div>
+
+<script>
+
+const questionPool = [
+
+{
+q:"新しい発明を保護する権利は？",
+c:["特許権","商標権","著作権","意匠権"],
+a:0
+},
+{
+q:"物品の形状や構造の考案を保護する権利は？",
+c:["実用新案権","特許権","商標権","著作権"],
+a:0
+},
+{
+q:"物品のデザインを保護する権利は？",
+c:["意匠権","著作権","特許権","実用新案権"],
+a:0
+},
+{
+q:"ブランド名やロゴを保護する権利は？",
+c:["商標権","特許権","著作権","意匠権"],
+a:0
+},
+{
+q:"放送事業者や出演者の権利を守るものは？",
+c:["著作隣接権","特許権","商標権","意匠権"],
+a:0
+},
+{
+q:"許可された人だけが利用できることを何という？",
+c:["機密性","完全性","可用性","安全性"],
+a:0
+},
+{
+q:"情報が改ざんされないことを何という？",
+c:["完全性","機密性","可用性","利便性"],
+a:0
+},
+{
+q:"必要な時に利用できることを何という？",
+c:["可用性","完全性","機密性","安全性"],
+a:0
+},
+{
+q:"情報社会で安全を守る技術を何という？",
+c:["サイバーセキュリティ","ICT","DX","IoT"],
+a:0
+},
+{
+q:"悪意をもって作られたプログラムを何という？",
+c:["マルウェア","OS","アプリ","ブラウザ"],
+a:0
+},
+{
+q:"防火壁という意味を持つセキュリティ対策は？",
+c:["ファイアウォール","DNS","SSL","ISP"],
+a:0
+},
+{
+q:"問題のあるWebサイトなどを制限する仕組みは？",
+c:["フィルタリング","ルーティング","DNS","共有"],
+a:0
+},
+{
+q:"指紋や顔などを利用する認証は？",
+c:["生体認証","パスワード認証","PIN認証","二重認証"],
+a:0
+},
+{
+q:"LANの正式名称は？",
+c:[
+"Local Area Network",
+"Large Area Network",
+"Local Access Node",
+"Link Area Network"
+],
+a:0
+},
+{
+q:"情報の交通整理をする機器は？",
+c:["ルータ","サーバ","プリンタ","モデム"],
+a:0
+},
+{
+q:"メールサーバなどのサービスを提供する機器は？",
+c:["サーバ","ルータ","ハブ","スイッチ"],
+a:0
+},
+{
+q:"ISPとは何の略？",
+c:[
+"Internet Service Provider",
+"Internet Server Protocol",
+"Internal Service Provider",
+"International Service Port"
+],
+a:0
+},
+{
+q:"機器を識別する番号は？",
+c:["IPアドレス","URL","パス名","ドメイン名"],
+a:0
+},
+{
+q:"IPアドレスとドメイン名を対応させるサーバは？",
+c:["DNSサーバ","WWWサーバ","メールサーバ","FTPサーバ"],
+a:0
+},
+{
+q:"URLのUは何の略？",
+c:["Uniform","Unique","Universal","Update"],
+a:0
+},
+
+{
+q:"URLの構成要素で通信方式を示すものは？",
+c:["プロトコル","ドメイン名","パス名","IPアドレス"],
+a:0
+},
+{
+q:"URLの構成要素でサーバを識別するものは？",
+c:["ドメイン名","パス名","ポート","フォルダ"],
+a:0
+},
+{
+q:"URLの構成要素で保存場所を示すものは？",
+c:["パス名","ドメイン名","プロトコル","DNS"],
+a:0
+},
+{
+q:"情報通信で使われる基本プロトコルは？",
+c:["TCP/IP","USB","HDMI","Bluetooth"],
+a:0
+},
+{
+q:"送信データを分割した単位を何という？",
+c:["パケット","フレーム","セル","ブロック"],
+a:0
+},
+{
+q:"著作物を利用する際に必要となる権利は？",
+c:["著作権","特許権","商標権","意匠権"],
+a:0
+},
+{
+q:"他人の著作物を利用して説明することを何という？",
+c:["引用","盗用","複製","改ざん"],
+a:0
+},
+{
+q:"引用部分は自分の文章とどうする？",
+c:["区別する","混ぜる","削除する","隠す"],
+a:0
+},
+{
+q:"情報社会で適切に活動する考え方を何という？",
+c:["情報モラル","著作権","情報検索","知的財産"],
+a:0
+},
+{
+q:"知的財産権に含まれる権利は？",
+c:["著作権","自動車税","住民税","消費税"],
+a:0
+},
+
+{
+q:"スマートフォンのデザインは何で保護される？",
+c:["意匠権","商標権","著作権","特許権"],
+a:0
+},
+{
+q:"スマホのブランド名は何で保護される？",
+c:["商標権","特許権","意匠権","実用新案権"],
+a:0
+},
+{
+q:"リチウム電池の発明は何で保護される？",
+c:["特許権","意匠権","商標権","著作権"],
+a:0
+},
+{
+q:"スマホのボタン構造は何で保護される？",
+c:["実用新案権","著作権","商標権","意匠権"],
+a:0
+},
+{
+q:"写真や動画を手軽に公開できる利点があるものは？",
+c:["情報発信","情報漏洩","改ざん","攻撃"],
+a:0
+},
+{
+q:"位置情報から居場所が特定される危険があるのは？",
+c:["写真投稿","LAN","DNS","URL"],
+a:0
+},
+{
+q:"不確かな情報を拡散すると何になる可能性がある？",
+c:["加害者","被害者のみ","開発者","設計者"],
+a:0
+},
+{
+q:"情報検索の利点は？",
+c:["簡単に情報入手","情報が必ず正しい","危険がない","誤情報がない"],
+a:0
+},
+{
+q:"情報検索の注意点は？",
+c:["誤情報がある","必ず正しい","更新不要","確認不要"],
+a:0
+},
+{
+q:"デジタルコンテンツの例は？",
+c:["電子書籍","紙のノート","定規","消しゴム"],
+a:0
+},
+
+{
+q:"ゲームは何の例？",
+c:["デジタルコンテンツ","知的財産権","ISP","URL"],
+a:0
+},
+{
+q:"音楽データは何の例？",
+c:["デジタルコンテンツ","LAN","DNS","IPアドレス"],
+a:0
+},
+{
+q:"クリエイティブ・コモンズは何を確認するために使う？",
+c:["著作権","税金","住所","点数"],
+a:0
+},
+{
+q:"BYは何を意味する？",
+c:["表示","改変禁止","非営利","継承"],
+a:0
+},
+{
+q:"NCは何を意味する？",
+c:["非営利","表示","継承","改変禁止"],
+a:0
+},
+{
+q:"NDは何を意味する？",
+c:["改変禁止","表示","非営利","継承"],
+a:0
+},
+{
+q:"SAは何を意味する？",
+c:["継承","非営利","表示","改変禁止"],
+a:0
+},
+{
+q:"ユーザーIDとパスワードで行うものは？",
+c:["認証","暗号化","検索","通信"],
+a:0
+},
+{
+q:"コンピュータ同士をつないだものは？",
+c:["情報通信ネットワーク","OS","ブラウザ","アプリ"],
+a:0
+},
+{
+q:"Webページを識別するためにも使われるものは？",
+c:["URL","IPアドレス","LAN","サーバ"],
+a:0
+},
+
+{
+q:"URLは何を示す記号？",
+c:["保存場所と送信方法","暗号方式","ユーザー名","認証方式"],
+a:0
+},
+{
+q:"TCP/IPは何に従って通信する？",
+c:["ネットワークプロトコル","著作権法","道路交通法","商標法"],
+a:0
+},
+{
+q:"機密性・完全性・可用性を合わせて何という？",
+c:["情報セキュリティの3要素","知的財産権","情報モラル","著作権"],
+a:0
+},
+{
+q:"コンピュータウイルス感染を防ぐソフトは？",
+c:["セキュリティ対策ソフト","表計算ソフト","動画編集ソフト","ペイント"],
+a:0
+},
+{
+q:"情報発信で起こりうる問題は？",
+c:["情報拡散","停電","印刷不良","画面割れ"],
+a:0
+},
+{
+q:"公開された動画を視聴できるのは何の便利な点？",
+c:["情報サービス","情報漏洩","誤情報","攻撃"],
+a:0
+},
+{
+q:"著作権法違反の動画公開は？",
+c:["問題がある","推奨される","安全","合法"],
+a:0
+},
+{
+q:"情報モラルで重要なのは？",
+c:["適切な行動","無断転載","誹謗中傷","改ざん"],
+a:0
+},
+{
+q:"サーバを識別する名前は？",
+c:["ドメイン名","パス名","WiFi","LAN"],
+a:0
+},
+{
+q:"情報の保存場所を示すURL要素は？",
+c:["パス名","ドメイン名","プロトコル","ISP"],
+a:0
+}
+
+];
+
+let questions=[];
+let total=0;
+let current=0;
+let score=0;
+
+function shuffle(arr){
+ return arr.sort(()=>Math.random()-0.5);
+}
+
+function startQuiz(num){
+
+ total=num;
+
+ questions=shuffle([...questionPool]).slice(0,num);
+
+ document.getElementById("start").style.display="none";
+ document.getElementById("quiz").style.display="block";
+
+ showQuestion();
+}
+
+function showQuestion(){
+
+ document.getElementById("result").innerHTML="";
+
+ let q=questions[current];
+
+ document.getElementById("count").innerHTML=
+ `${current+1} / ${total}`;
+
+ document.getElementById("question").innerHTML=q.q;
+
+ let html="";
+
+ q.c.forEach((choice,index)=>{
+
+   html+=`
+   <button class="choice"
+   onclick="answer(${index})">
+   ${choice}
+   </button>`;
+ });
+
+ document.getElementById("choices").innerHTML=html;
+}
+
+function answer(index){
+
+ let q=questions[current];
+
+ const result=document.getElementById("result");
+
+ if(index===q.a){
+   score++;
+   result.innerHTML='<p class="correct">○ 正解！</p>';
+ }else{
+   result.innerHTML=
+   `<p class="wrong">× 不正解<br>
+   正解：${q.c[q.a]}</p>`;
+ }
+
+ document.getElementById("choices").innerHTML="";
+
+ setTimeout(()=>{
+
+   current++;
+
+   if(current>=total){
+      finishQuiz();
+   }else{
+      showQuestion();
+   }
+
+ },1200);
+
+}
+
+function finishQuiz(){
+
+ document.getElementById("quiz").style.display="none";
+ document.getElementById("finish").style.display="block";
+
+ let rate=Math.round(score/total*100);
+
+ document.getElementById("score").innerHTML=
+ `正解数 ${score}/${total}<br>
+ 正答率 ${rate}%`;
+}
+
+</script>
+
+</body>
+</html>
